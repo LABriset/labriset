@@ -1,0 +1,188 @@
+---
+title: TRY
+author: LAB
+date: '2021-05-03'
+slug: try
+categories:
+  - R
+tags:
+  - R Markdown
+---
+
+```{r}
+##################################################################
+########## persiapan Data World Values Survey (WVS) ##############
+##### Script ini adalah alur kerja untuk memeriksa data WVS, #####
+##### dari awal data mentah, pemilihan variabel yang relevan #####
+##### dan inspeksi data secara umum dan keseluruhan          #####
+##################################################################
+
+## 1. Setup working directonary
+
+setwd("D:/Kuliah/SEMESTER 3/MPS/WVS DATA/Journal")
+
+## 2. Mengimpor Data
+
+library(haven)
+
+wvs.dta <- read_dta("D:/Kuliah/SEMESTER 3/MPS/WVS DATA/F00010404-WVS_Wave_7_Indonesia_Stata_v1.4/WVS_Wave_7_Indonesia_Stata_v1.4.dta")
+
+## 3. Inspeksi Data (1) mengecek data secara keseluruhan 
+
+dim(wvs.dta)
+View(wvs.dta)
+names(wvs.dta)
+head(wvs.dta, n = 2)
+tail(wvs.dta, n = 2)
+str(wvs.dta)
+
+## 4. Membuat data frame untuk analisis yang kita butuhkan
+
+library(tidyverse)
+
+wvs.dta <- wvs.dta %>% 
+  select(Q1, Q2, Q3, Q4, Q5, Q6, Q47, Q49, Q50, Q57, Q260, Q262, Q273, Q275, Q279, Q288, Q202) %>%
+  rename("ptg.keluarga"="Q1",
+         "ptg.teman"="Q2",
+         "ptg.waktu"="Q3",
+         "ptg.politik"="Q4", 
+         "ptg.pekerjaan"="Q5", 
+         "ptg.agama"="Q6", 
+         "kesehatan"="Q47", 
+         "kepuasan.hari"="Q49", 
+         "kepuasan.keuangan"="Q50", 
+         "tkt.percaya"="Q57", 
+         "gender"="Q260",
+         "usia"="Q262", 
+         "sts.nikah"="Q273",
+         "pendidikan"="Q275",
+         "statuskerja"="Q279",
+         "pendapatan"="Q288", 
+         "TV"="Q202")
+
+## 5. Inspeksi Data (2) - Setelah pemilihan variabel
+
+dim(wvs.dta)
+view(wvs.dta)
+names(wvs.dta)
+head(wvs.dta, n = 2)
+tail(wvs.dta, n = 2)
+str(wvs.dta)
+
+## 6. Inspeksi Data (3) - Lebih dalam memahami variabel
+
+library(labelled)
+look_for(wvs.dta)
+look_for(wvs.dta, "ptg.keluarga")
+look_for(wvs.dta, "ptg.teman")
+look_for(wvs.dta, "ptg.waktu")
+look_for(wvs.dta, "ptg.politik")
+look_for(wvs.dta, "ptg.pekerjaan")
+look_for(wvs.dta, "ptg.agama")
+look_for(wvs.dta, "kesehatan")
+look_for(wvs.dta, "kepuasan.hari")
+look_for(wvs.dta, "kepuasan.keuangan")
+look_for(wvs.dta, "tkt.percaya")
+look_for(wvs.dta, "gender")
+look_for(wvs.dta, "usia")
+look_for(wvs.dta, "sts.nikah")
+look_for(wvs.dta, "pendidikan")
+look_for(wvs.dta, "pendapatan")
+look_for(wvs.dta, "statuskerja")
+look_for(wvs.dta, "TV")
+
+
+wvs.dta <- as.data.frame(apply(wvs.dta, 2, function(x) as.numeric(x)))
+
+look_for(wvs.dta)
+look_for(wvs.dta, "ptg.keluarga")
+look_for(wvs.dta, "ptg.teman")
+look_for(wvs.dta, "ptg.waktu")
+look_for(wvs.dta, "ptg.politik")
+look_for(wvs.dta, "ptg.pekerjaan")
+look_for(wvs.dta, "ptg.agama")
+look_for(wvs.dta, "kesehatan")
+look_for(wvs.dta, "kepuasan.hari")
+look_for(wvs.dta, "kepuasan.keuangan")
+look_for(wvs.dta, "tkt.percaya")
+look_for(wvs.dta, "gender")
+look_for(wvs.dta, "usia")
+look_for(wvs.dta, "sts.nikah")
+look_for(wvs.dta, "pendidikan")
+look_for(wvs.dta, "pendapatan")
+look_for(wvs.dta, "statuskerja")
+look_for(wvs.dta, "TV")
+
+## 1. Recode Data
+
+### Recode kesehatan
+wvs.dta <- mutate(wvs.dta, kesehatan.x = case_when(
+  kesehatan == 1 ~ 4,
+  kesehatan == 2 ~ 3,
+  kesehatan == 3 ~ 2,
+  kesehatan == 4 ~ 1,
+  TRUE ~ NA_real_
+))
+
+
+### 2. Membuat Dummy Variable
+
+## Dummy pendidikan
+library(labelled)
+look_for(wvs.dta, "pendidikan")
+wvs.dta$lowedu <- ifelse(wvs.dta$pendidikan==1,1,0)
+wvs.dta <- mutate(wvs.dta, middleedu = case_when(
+  pendidikan  <= 1 ~ 0,
+  pendidikan  == 2 ~ 1,
+  pendidikan  == 3 ~ 1,
+  pendidikan  >= 4 ~ 0,
+  TRUE ~ NA_real_
+))
+wvs.dta$Highedu <- ifelse(wvs.dta$pendidikan>=4,1,0)
+
+## Dummy gender
+look_for(wvs.dta, "gender")
+wvs.dta$male <- ifelse(wvs.dta$gender==1,1,0)
+
+## Dummy sts.nikah
+look_for(wvs.dta, "sts.nikah")
+wvs.dta$menikah <- ifelse(wvs.dta$sts.nikah==1,1,0)
+
+
+## Dummy tkt.percaya
+look_for(wvs.dta, "tkt.percaya")
+wvs.dta$percaya <- ifelse(wvs.dta$tkt.percaya==1,1,0)
+wvs.dta$tdkperrcaya <- ifelse(wvs.dta$tkt.percaya==2,0,0)
+
+## Dummy Pendapatan 
+look_for(wvs.dta, "pendapatan")
+wvs.dta$highincome <- ifelse(wvs.dta$pendapatan<=5,1,0)
+wvs.dta$lowincome <- ifelse(wvs.dta$pendapatan<=10,1,0)
+
+## Dummy TV
+look_for(wvs.dta, "TV")
+wvs.dta$daily <- ifelse(wvs.dta$TV ==1,1,0)
+wvs.dta$weekly <- ifelse(wvs.dta$TV ==2,1,0)
+wvs.dta$monthly <- ifelse(wvs.dta$TV ==3,1,0)
+wvs.dta$lessmonthly <- ifelse(wvs.dta$TV ==4,1,0)
+wvs.dta$never <- ifelse(wvs.dta$TV==5,1,0)
+
+## Dummy  statuskerja
+look_for(wvs.dta, "statuskerja")
+wvs.dta$unemployment <- ifelse(wvs.dta$statuskerja ==7,1,0)
+
+
+wvs.dta <- as.data.frame(apply(wvs.dta, 2, function(x) as.numeric(x)))
+write.csv(wvs.dta, "Faiz Chusaini_20413244026_TugasStatistika.csv")
+
+
+#REGRESION
+library(stargazer)
+regression <- lm(kepuasan.keuangan ~ pendapatan + TV, data = wvs.dta)
+summary(regression)
+stargazer(regression, type = "html", 
+          out = "regression.htm")
+plot(regression)
+
+
+```
