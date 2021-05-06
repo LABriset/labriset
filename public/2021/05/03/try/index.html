@@ -1,0 +1,1549 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Hugo 0.82.0" />
+
+
+<title>TRY - A Hugo website</title>
+<meta property="og:title" content="TRY - A Hugo website">
+
+
+  <link href='/logo%20lab.png' rel='icon' type='image/x-icon'/>
+
+
+
+  
+
+
+
+
+
+
+
+
+<link href='//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css' rel='stylesheet' type='text/css' />
+
+
+
+<link rel="stylesheet" href="/css/fonts.css" media="all">
+<link rel="stylesheet" href="/css/main.css" media="all">
+
+
+
+  </head>
+  <body>
+    <div class="wrapper">
+      <header class="header">
+        <nav class="nav">
+  <a href="/" class="nav-logo">
+    <img src="/images/logo.png"
+         width="50"
+         height="50"
+         alt="Logo">
+  </a>
+
+  <ul class="nav-links">
+    
+    <li><a href="/about/">About</a></li>
+    
+    <li><a href="https://github.com/rstudio/blogdown">GitHub</a></li>
+    
+    <li><a href="https://twitter.com/rstudio">Twitter</a></li>
+    
+  </ul>
+</nav>
+
+      </header>
+
+
+<main class="content" role="main">
+
+  <article class="article">
+    
+    <span class="article-duration">64 min read</span>
+    
+
+    <h1 class="article-title">TRY</h1>
+
+    
+    <span class="article-date">2021-05-03</span>
+    
+
+    <div class="article-content">
+      
+
+
+<pre class="r"><code>##################################################################
+########## persiapan Data World Values Survey (WVS) ##############
+##### Script ini adalah alur kerja untuk memeriksa data WVS, #####
+##### dari awal data mentah, pemilihan variabel yang relevan #####
+##### dan inspeksi data secara umum dan keseluruhan          #####
+##################################################################
+
+## 1. Setup working directonary
+
+setwd(&quot;D:/Kuliah/SEMESTER 3/MPS/WVS DATA/Journal&quot;)
+
+## 2. Mengimpor Data
+
+library(haven)
+
+wvs.dta &lt;- read_dta(&quot;D:/Kuliah/SEMESTER 3/MPS/WVS DATA/F00010404-WVS_Wave_7_Indonesia_Stata_v1.4/WVS_Wave_7_Indonesia_Stata_v1.4.dta&quot;)
+
+## 3. Inspeksi Data (1) mengecek data secara keseluruhan 
+
+dim(wvs.dta)</code></pre>
+<pre><code>## [1] 3200  380</code></pre>
+<pre class="r"><code>View(wvs.dta)
+names(wvs.dta)</code></pre>
+<pre><code>##   [1] &quot;B_COUNTRY&quot;       &quot;B_COUNTRY_ALPHA&quot; &quot;C_COW_NUM&quot;       &quot;C_COW_ALPHA&quot;    
+##   [5] &quot;A_YEAR&quot;          &quot;D_INTERVIEW&quot;     &quot;J_INTDATE&quot;       &quot;Q_MODE&quot;         
+##   [9] &quot;N_REGION_ISO&quot;    &quot;N_REGION_WVS&quot;    &quot;G_TOWNSIZE&quot;      &quot;G_TOWNSIZE2&quot;    
+##  [13] &quot;H_SETTLEMENT&quot;    &quot;H_URBRURAL&quot;      &quot;I_PSU&quot;           &quot;O1_LONGITUDE&quot;   
+##  [17] &quot;O2_LATITUDE&quot;     &quot;S_INTLANGUAGE&quot;   &quot;E_RESPINT&quot;       &quot;F_INTPRIVACY&quot;   
+##  [21] &quot;W_WEIGHT&quot;        &quot;S018&quot;            &quot;S019&quot;            &quot;Q1&quot;             
+##  [25] &quot;Q2&quot;              &quot;Q3&quot;              &quot;Q4&quot;              &quot;Q5&quot;             
+##  [29] &quot;Q6&quot;              &quot;Q7&quot;              &quot;Q8&quot;              &quot;Q9&quot;             
+##  [33] &quot;Q10&quot;             &quot;Q11&quot;             &quot;Q12&quot;             &quot;Q13&quot;            
+##  [37] &quot;Q14&quot;             &quot;Q15&quot;             &quot;Q16&quot;             &quot;Q17&quot;            
+##  [41] &quot;Q18&quot;             &quot;Q19&quot;             &quot;Q20&quot;             &quot;Q21&quot;            
+##  [45] &quot;Q22&quot;             &quot;Q23&quot;             &quot;Q24&quot;             &quot;Q25&quot;            
+##  [49] &quot;Q26&quot;             &quot;Q27&quot;             &quot;Q28&quot;             &quot;Q29&quot;            
+##  [53] &quot;Q30&quot;             &quot;Q31&quot;             &quot;Q32&quot;             &quot;Q33&quot;            
+##  [57] &quot;Q34&quot;             &quot;Q35&quot;             &quot;Q36&quot;             &quot;Q37&quot;            
+##  [61] &quot;Q38&quot;             &quot;Q39&quot;             &quot;Q40&quot;             &quot;Q41&quot;            
+##  [65] &quot;Q42&quot;             &quot;Q43&quot;             &quot;Q44&quot;             &quot;Q45&quot;            
+##  [69] &quot;Q46&quot;             &quot;Q47&quot;             &quot;Q48&quot;             &quot;Q49&quot;            
+##  [73] &quot;Q50&quot;             &quot;Q51&quot;             &quot;Q52&quot;             &quot;Q53&quot;            
+##  [77] &quot;Q54&quot;             &quot;Q55&quot;             &quot;Q56&quot;             &quot;Q57&quot;            
+##  [81] &quot;Q58&quot;             &quot;Q59&quot;             &quot;Q60&quot;             &quot;Q61&quot;            
+##  [85] &quot;Q62&quot;             &quot;Q63&quot;             &quot;Q64&quot;             &quot;Q65&quot;            
+##  [89] &quot;Q66&quot;             &quot;Q67&quot;             &quot;Q68&quot;             &quot;Q69&quot;            
+##  [93] &quot;Q70&quot;             &quot;Q71&quot;             &quot;Q72&quot;             &quot;Q73&quot;            
+##  [97] &quot;Q74&quot;             &quot;Q75&quot;             &quot;Q76&quot;             &quot;Q77&quot;            
+## [101] &quot;Q78&quot;             &quot;Q79&quot;             &quot;Q80&quot;             &quot;Q81&quot;            
+## [105] &quot;Q82_ASEAN&quot;       &quot;Q83&quot;             &quot;Q84&quot;             &quot;Q85&quot;            
+## [109] &quot;Q86&quot;             &quot;Q87&quot;             &quot;Q88&quot;             &quot;Q89&quot;            
+## [113] &quot;Q90&quot;             &quot;Q91&quot;             &quot;Q92&quot;             &quot;Q93&quot;            
+## [117] &quot;Q94&quot;             &quot;Q95&quot;             &quot;Q96&quot;             &quot;Q97&quot;            
+## [121] &quot;Q98&quot;             &quot;Q99&quot;             &quot;Q100&quot;            &quot;Q101&quot;           
+## [125] &quot;Q102&quot;            &quot;Q103&quot;            &quot;Q104&quot;            &quot;Q105&quot;           
+## [129] &quot;Q106&quot;            &quot;Q107&quot;            &quot;Q108&quot;            &quot;Q109&quot;           
+## [133] &quot;Q110&quot;            &quot;Q111&quot;            &quot;Q112&quot;            &quot;Q113&quot;           
+## [137] &quot;Q114&quot;            &quot;Q115&quot;            &quot;Q116&quot;            &quot;Q117&quot;           
+## [141] &quot;Q118&quot;            &quot;Q119&quot;            &quot;Q120&quot;            &quot;Q121&quot;           
+## [145] &quot;Q122&quot;            &quot;Q123&quot;            &quot;Q124&quot;            &quot;Q125&quot;           
+## [149] &quot;Q126&quot;            &quot;Q127&quot;            &quot;Q128&quot;            &quot;Q129&quot;           
+## [153] &quot;Q130&quot;            &quot;Q131&quot;            &quot;Q132&quot;            &quot;Q133&quot;           
+## [157] &quot;Q134&quot;            &quot;Q135&quot;            &quot;Q136&quot;            &quot;Q137&quot;           
+## [161] &quot;Q138&quot;            &quot;Q139&quot;            &quot;Q140&quot;            &quot;Q141&quot;           
+## [165] &quot;Q142&quot;            &quot;Q143&quot;            &quot;Q144&quot;            &quot;Q145&quot;           
+## [169] &quot;Q146&quot;            &quot;Q147&quot;            &quot;Q148&quot;            &quot;Q149&quot;           
+## [173] &quot;Q150&quot;            &quot;Q151&quot;            &quot;Q152&quot;            &quot;Q153&quot;           
+## [177] &quot;Q154&quot;            &quot;Q155&quot;            &quot;Q156&quot;            &quot;Q157&quot;           
+## [181] &quot;Q158&quot;            &quot;Q159&quot;            &quot;Q160&quot;            &quot;Q161&quot;           
+## [185] &quot;Q162&quot;            &quot;Q163&quot;            &quot;Q164&quot;            &quot;Q165&quot;           
+## [189] &quot;Q166&quot;            &quot;Q167&quot;            &quot;Q168&quot;            &quot;Q169&quot;           
+## [193] &quot;Q170&quot;            &quot;Q171&quot;            &quot;Q172&quot;            &quot;Q173&quot;           
+## [197] &quot;Q174&quot;            &quot;Q175&quot;            &quot;Q176&quot;            &quot;Q177&quot;           
+## [201] &quot;Q178&quot;            &quot;Q179&quot;            &quot;Q180&quot;            &quot;Q181&quot;           
+## [205] &quot;Q182&quot;            &quot;Q183&quot;            &quot;Q184&quot;            &quot;Q185&quot;           
+## [209] &quot;Q186&quot;            &quot;Q187&quot;            &quot;Q188&quot;            &quot;Q189&quot;           
+## [213] &quot;Q190&quot;            &quot;Q191&quot;            &quot;Q192&quot;            &quot;Q193&quot;           
+## [217] &quot;Q194&quot;            &quot;Q195&quot;            &quot;Q196&quot;            &quot;Q197&quot;           
+## [221] &quot;Q198&quot;            &quot;Q199&quot;            &quot;Q200&quot;            &quot;Q201&quot;           
+## [225] &quot;Q202&quot;            &quot;Q203&quot;            &quot;Q204&quot;            &quot;Q205&quot;           
+## [229] &quot;Q206&quot;            &quot;Q207&quot;            &quot;Q208&quot;            &quot;Q209&quot;           
+## [233] &quot;Q210&quot;            &quot;Q211&quot;            &quot;Q212&quot;            &quot;Q213&quot;           
+## [237] &quot;Q214&quot;            &quot;Q215&quot;            &quot;Q216&quot;            &quot;Q217&quot;           
+## [241] &quot;Q218&quot;            &quot;Q219&quot;            &quot;Q220&quot;            &quot;Q221&quot;           
+## [245] &quot;Q222&quot;            &quot;Q223&quot;            &quot;Q224&quot;            &quot;Q225&quot;           
+## [249] &quot;Q226&quot;            &quot;Q227&quot;            &quot;Q228&quot;            &quot;Q229&quot;           
+## [253] &quot;Q230&quot;            &quot;Q231&quot;            &quot;Q232&quot;            &quot;Q233&quot;           
+## [257] &quot;Q234&quot;            &quot;Q234A&quot;           &quot;Q235&quot;            &quot;Q236&quot;           
+## [261] &quot;Q237&quot;            &quot;Q238&quot;            &quot;Q239&quot;            &quot;Q240&quot;           
+## [265] &quot;Q241&quot;            &quot;Q242&quot;            &quot;Q243&quot;            &quot;Q244&quot;           
+## [269] &quot;Q245&quot;            &quot;Q246&quot;            &quot;Q247&quot;            &quot;Q248&quot;           
+## [273] &quot;Q249&quot;            &quot;Q250&quot;            &quot;Q251&quot;            &quot;Q252&quot;           
+## [277] &quot;Q253&quot;            &quot;Q254&quot;            &quot;Q255&quot;            &quot;Q256&quot;           
+## [281] &quot;Q257&quot;            &quot;Q258&quot;            &quot;Q259&quot;            &quot;Q260&quot;           
+## [285] &quot;Q261&quot;            &quot;Q262&quot;            &quot;Q263&quot;            &quot;Q264&quot;           
+## [289] &quot;Q265&quot;            &quot;Q266&quot;            &quot;Q267&quot;            &quot;Q268&quot;           
+## [293] &quot;Q269&quot;            &quot;Q270&quot;            &quot;Q271&quot;            &quot;Q272&quot;           
+## [297] &quot;Q273&quot;            &quot;Q274&quot;            &quot;Q275&quot;            &quot;Q275A&quot;          
+## [301] &quot;Q275R&quot;           &quot;Q276&quot;            &quot;Q276A&quot;           &quot;Q276R&quot;          
+## [305] &quot;Q277&quot;            &quot;Q277A&quot;           &quot;Q277R&quot;           &quot;Q278&quot;           
+## [309] &quot;Q278A&quot;           &quot;Q278R&quot;           &quot;Q279&quot;            &quot;Q280&quot;           
+## [313] &quot;Q281&quot;            &quot;Q282&quot;            &quot;Q283&quot;            &quot;Q284&quot;           
+## [317] &quot;Q285&quot;            &quot;Q286&quot;            &quot;Q287&quot;            &quot;Q288&quot;           
+## [321] &quot;Q288R&quot;           &quot;Q289&quot;            &quot;Q289CS&quot;          &quot;Q290&quot;           
+## [325] &quot;Y001&quot;            &quot;Y002&quot;            &quot;Y003&quot;            &quot;SACSECVAL&quot;      
+## [329] &quot;SACSECVALB&quot;      &quot;RESEMAVAL&quot;       &quot;RESEMAVALB&quot;      &quot;I_AUTHORITY&quot;    
+## [333] &quot;I_NATIONALISM&quot;   &quot;I_DEVOUT&quot;        &quot;DEFIANCE&quot;        &quot;I_RELIGIMP&quot;     
+## [337] &quot;I_RELIGBEL&quot;      &quot;I_RELIGPRAC&quot;     &quot;DISBELIEF&quot;       &quot;I_NORM1&quot;        
+## [341] &quot;I_NORM2&quot;         &quot;I_NORM3&quot;         &quot;RELATIVISM&quot;      &quot;I_TRUSTARMY&quot;    
+## [345] &quot;I_TRUSTPOLICE&quot;   &quot;I_TRUSTCOURTS&quot;   &quot;SCEPTICISM&quot;      &quot;I_INDEP&quot;        
+## [349] &quot;I_IMAGIN&quot;        &quot;I_NONOBED&quot;       &quot;AUTONOMY&quot;        &quot;I_WOMJOB&quot;       
+## [353] &quot;I_WOMPOL&quot;        &quot;I_WOMEDU&quot;        &quot;EQUALITY&quot;        &quot;I_HOMOLIB&quot;      
+## [357] &quot;I_ABORTLIB&quot;      &quot;I_DIVORLIB&quot;      &quot;CHOICE&quot;          &quot;I_VOICE1&quot;       
+## [361] &quot;I_VOICE2&quot;        &quot;I_VOI2_00&quot;       &quot;VOICE&quot;           &quot;SECVALWGT&quot;      
+## [365] &quot;WEIGHT1A&quot;        &quot;WEIGHT1B&quot;        &quot;WEIGHT2A&quot;        &quot;WEIGHT2B&quot;       
+## [369] &quot;WEIGHT3A&quot;        &quot;WEIGHT3B&quot;        &quot;WEIGHT4A&quot;        &quot;WEIGHT4B&quot;       
+## [373] &quot;RESEMAVALBWGT&quot;   &quot;RESEMAVALWGT&quot;    &quot;SECVALBWGT&quot;      &quot;Y001_1&quot;         
+## [377] &quot;Y001_2&quot;          &quot;Y001_3&quot;          &quot;Y001_4&quot;          &quot;Y001_5&quot;</code></pre>
+<pre class="r"><code>head(wvs.dta, n = 2)</code></pre>
+<pre><code>## # A tibble: 2 x 380
+##   B_COUNTRY B_COUNTRY_ALPHA C_COW_NUM C_COW_ALPHA     A_YEAR D_INTERVIEW
+##   &lt;dbl+lbl&gt; &lt;chr&gt;           &lt;dbl+lbl&gt; &lt;chr&gt;        &lt;dbl+lbl&gt;       &lt;dbl&gt;
+## 1 360 [Ind~ IDN             850 [INS~ INS         2018 [201~   360070001
+## 2 360 [Ind~ IDN             850 [INS~ INS         2018 [201~   360070002
+## # ... with 374 more variables: J_INTDATE &lt;dbl+lbl&gt;, Q_MODE &lt;dbl+lbl&gt;,
+## #   N_REGION_ISO &lt;dbl+lbl&gt;, N_REGION_WVS &lt;dbl+lbl&gt;, G_TOWNSIZE &lt;dbl+lbl&gt;,
+## #   G_TOWNSIZE2 &lt;dbl+lbl&gt;, H_SETTLEMENT &lt;dbl+lbl&gt;, H_URBRURAL &lt;dbl+lbl&gt;,
+## #   I_PSU &lt;dbl+lbl&gt;, O1_LONGITUDE &lt;dbl+lbl&gt;, O2_LATITUDE &lt;dbl+lbl&gt;,
+## #   S_INTLANGUAGE &lt;dbl+lbl&gt;, E_RESPINT &lt;dbl+lbl&gt;, F_INTPRIVACY &lt;dbl+lbl&gt;,
+## #   W_WEIGHT &lt;dbl+lbl&gt;, S018 &lt;dbl+lbl&gt;, S019 &lt;dbl+lbl&gt;, Q1 &lt;dbl+lbl&gt;,
+## #   Q2 &lt;dbl+lbl&gt;, Q3 &lt;dbl+lbl&gt;, Q4 &lt;dbl+lbl&gt;, Q5 &lt;dbl+lbl&gt;, Q6 &lt;dbl+lbl&gt;,
+## #   Q7 &lt;dbl+lbl&gt;, Q8 &lt;dbl+lbl&gt;, Q9 &lt;dbl+lbl&gt;, Q10 &lt;dbl+lbl&gt;, Q11 &lt;dbl+lbl&gt;,
+## #   Q12 &lt;dbl+lbl&gt;, Q13 &lt;dbl+lbl&gt;, Q14 &lt;dbl+lbl&gt;, Q15 &lt;dbl+lbl&gt;, Q16 &lt;dbl+lbl&gt;,
+## #   Q17 &lt;dbl+lbl&gt;, Q18 &lt;dbl+lbl&gt;, Q19 &lt;dbl+lbl&gt;, Q20 &lt;dbl+lbl&gt;, Q21 &lt;dbl+lbl&gt;,
+## #   Q22 &lt;dbl+lbl&gt;, Q23 &lt;dbl+lbl&gt;, Q24 &lt;dbl+lbl&gt;, Q25 &lt;dbl+lbl&gt;, Q26 &lt;dbl+lbl&gt;,
+## #   Q27 &lt;dbl+lbl&gt;, Q28 &lt;dbl+lbl&gt;, Q29 &lt;dbl+lbl&gt;, Q30 &lt;dbl+lbl&gt;, Q31 &lt;dbl+lbl&gt;,
+## #   Q32 &lt;dbl+lbl&gt;, Q33 &lt;dbl+lbl&gt;, Q34 &lt;dbl+lbl&gt;, Q35 &lt;dbl+lbl&gt;, Q36 &lt;dbl+lbl&gt;,
+## #   Q37 &lt;dbl+lbl&gt;, Q38 &lt;dbl+lbl&gt;, Q39 &lt;dbl+lbl&gt;, Q40 &lt;dbl+lbl&gt;, Q41 &lt;dbl+lbl&gt;,
+## #   Q42 &lt;dbl+lbl&gt;, Q43 &lt;dbl+lbl&gt;, Q44 &lt;dbl+lbl&gt;, Q45 &lt;dbl+lbl&gt;, Q46 &lt;dbl+lbl&gt;,
+## #   Q47 &lt;dbl+lbl&gt;, Q48 &lt;dbl+lbl&gt;, Q49 &lt;dbl+lbl&gt;, Q50 &lt;dbl+lbl&gt;, Q51 &lt;dbl+lbl&gt;,
+## #   Q52 &lt;dbl+lbl&gt;, Q53 &lt;dbl+lbl&gt;, Q54 &lt;dbl+lbl&gt;, Q55 &lt;dbl+lbl&gt;, Q56 &lt;dbl+lbl&gt;,
+## #   Q57 &lt;dbl+lbl&gt;, Q58 &lt;dbl+lbl&gt;, Q59 &lt;dbl+lbl&gt;, Q60 &lt;dbl+lbl&gt;, Q61 &lt;dbl+lbl&gt;,
+## #   Q62 &lt;dbl+lbl&gt;, Q63 &lt;dbl+lbl&gt;, Q64 &lt;dbl+lbl&gt;, Q65 &lt;dbl+lbl&gt;, Q66 &lt;dbl+lbl&gt;,
+## #   Q67 &lt;dbl+lbl&gt;, Q68 &lt;dbl+lbl&gt;, Q69 &lt;dbl+lbl&gt;, Q70 &lt;dbl+lbl&gt;, Q71 &lt;dbl+lbl&gt;,
+## #   Q72 &lt;dbl+lbl&gt;, Q73 &lt;dbl+lbl&gt;, Q74 &lt;dbl+lbl&gt;, Q75 &lt;dbl+lbl&gt;, Q76 &lt;dbl+lbl&gt;,
+## #   Q77 &lt;dbl+lbl&gt;, Q78 &lt;dbl+lbl&gt;, Q79 &lt;dbl+lbl&gt;, Q80 &lt;dbl+lbl&gt;, Q81 &lt;dbl+lbl&gt;,
+## #   Q82_ASEAN &lt;dbl+lbl&gt;, Q83 &lt;dbl+lbl&gt;, ...</code></pre>
+<pre class="r"><code>tail(wvs.dta, n = 2)</code></pre>
+<pre><code>## # A tibble: 2 x 380
+##   B_COUNTRY B_COUNTRY_ALPHA C_COW_NUM C_COW_ALPHA     A_YEAR D_INTERVIEW
+##   &lt;dbl+lbl&gt; &lt;chr&gt;           &lt;dbl+lbl&gt; &lt;chr&gt;        &lt;dbl+lbl&gt;       &lt;dbl&gt;
+## 1 360 [Ind~ IDN             850 [INS~ INS         2018 [201~   360073199
+## 2 360 [Ind~ IDN             850 [INS~ INS         2018 [201~   360073200
+## # ... with 374 more variables: J_INTDATE &lt;dbl+lbl&gt;, Q_MODE &lt;dbl+lbl&gt;,
+## #   N_REGION_ISO &lt;dbl+lbl&gt;, N_REGION_WVS &lt;dbl+lbl&gt;, G_TOWNSIZE &lt;dbl+lbl&gt;,
+## #   G_TOWNSIZE2 &lt;dbl+lbl&gt;, H_SETTLEMENT &lt;dbl+lbl&gt;, H_URBRURAL &lt;dbl+lbl&gt;,
+## #   I_PSU &lt;dbl+lbl&gt;, O1_LONGITUDE &lt;dbl+lbl&gt;, O2_LATITUDE &lt;dbl+lbl&gt;,
+## #   S_INTLANGUAGE &lt;dbl+lbl&gt;, E_RESPINT &lt;dbl+lbl&gt;, F_INTPRIVACY &lt;dbl+lbl&gt;,
+## #   W_WEIGHT &lt;dbl+lbl&gt;, S018 &lt;dbl+lbl&gt;, S019 &lt;dbl+lbl&gt;, Q1 &lt;dbl+lbl&gt;,
+## #   Q2 &lt;dbl+lbl&gt;, Q3 &lt;dbl+lbl&gt;, Q4 &lt;dbl+lbl&gt;, Q5 &lt;dbl+lbl&gt;, Q6 &lt;dbl+lbl&gt;,
+## #   Q7 &lt;dbl+lbl&gt;, Q8 &lt;dbl+lbl&gt;, Q9 &lt;dbl+lbl&gt;, Q10 &lt;dbl+lbl&gt;, Q11 &lt;dbl+lbl&gt;,
+## #   Q12 &lt;dbl+lbl&gt;, Q13 &lt;dbl+lbl&gt;, Q14 &lt;dbl+lbl&gt;, Q15 &lt;dbl+lbl&gt;, Q16 &lt;dbl+lbl&gt;,
+## #   Q17 &lt;dbl+lbl&gt;, Q18 &lt;dbl+lbl&gt;, Q19 &lt;dbl+lbl&gt;, Q20 &lt;dbl+lbl&gt;, Q21 &lt;dbl+lbl&gt;,
+## #   Q22 &lt;dbl+lbl&gt;, Q23 &lt;dbl+lbl&gt;, Q24 &lt;dbl+lbl&gt;, Q25 &lt;dbl+lbl&gt;, Q26 &lt;dbl+lbl&gt;,
+## #   Q27 &lt;dbl+lbl&gt;, Q28 &lt;dbl+lbl&gt;, Q29 &lt;dbl+lbl&gt;, Q30 &lt;dbl+lbl&gt;, Q31 &lt;dbl+lbl&gt;,
+## #   Q32 &lt;dbl+lbl&gt;, Q33 &lt;dbl+lbl&gt;, Q34 &lt;dbl+lbl&gt;, Q35 &lt;dbl+lbl&gt;, Q36 &lt;dbl+lbl&gt;,
+## #   Q37 &lt;dbl+lbl&gt;, Q38 &lt;dbl+lbl&gt;, Q39 &lt;dbl+lbl&gt;, Q40 &lt;dbl+lbl&gt;, Q41 &lt;dbl+lbl&gt;,
+## #   Q42 &lt;dbl+lbl&gt;, Q43 &lt;dbl+lbl&gt;, Q44 &lt;dbl+lbl&gt;, Q45 &lt;dbl+lbl&gt;, Q46 &lt;dbl+lbl&gt;,
+## #   Q47 &lt;dbl+lbl&gt;, Q48 &lt;dbl+lbl&gt;, Q49 &lt;dbl+lbl&gt;, Q50 &lt;dbl+lbl&gt;, Q51 &lt;dbl+lbl&gt;,
+## #   Q52 &lt;dbl+lbl&gt;, Q53 &lt;dbl+lbl&gt;, Q54 &lt;dbl+lbl&gt;, Q55 &lt;dbl+lbl&gt;, Q56 &lt;dbl+lbl&gt;,
+## #   Q57 &lt;dbl+lbl&gt;, Q58 &lt;dbl+lbl&gt;, Q59 &lt;dbl+lbl&gt;, Q60 &lt;dbl+lbl&gt;, Q61 &lt;dbl+lbl&gt;,
+## #   Q62 &lt;dbl+lbl&gt;, Q63 &lt;dbl+lbl&gt;, Q64 &lt;dbl+lbl&gt;, Q65 &lt;dbl+lbl&gt;, Q66 &lt;dbl+lbl&gt;,
+## #   Q67 &lt;dbl+lbl&gt;, Q68 &lt;dbl+lbl&gt;, Q69 &lt;dbl+lbl&gt;, Q70 &lt;dbl+lbl&gt;, Q71 &lt;dbl+lbl&gt;,
+## #   Q72 &lt;dbl+lbl&gt;, Q73 &lt;dbl+lbl&gt;, Q74 &lt;dbl+lbl&gt;, Q75 &lt;dbl+lbl&gt;, Q76 &lt;dbl+lbl&gt;,
+## #   Q77 &lt;dbl+lbl&gt;, Q78 &lt;dbl+lbl&gt;, Q79 &lt;dbl+lbl&gt;, Q80 &lt;dbl+lbl&gt;, Q81 &lt;dbl+lbl&gt;,
+## #   Q82_ASEAN &lt;dbl+lbl&gt;, Q83 &lt;dbl+lbl&gt;, ...</code></pre>
+<pre class="r"><code>str(wvs.dta)</code></pre>
+<pre><code>## tibble [3,200 x 380] (S3: tbl_df/tbl/data.frame)
+##  $ B_COUNTRY      : dbl+lbl [1:3200] 360, 360, 360, 360, 360, 360, 360, 360, 360, 360, 360...
+##    ..@ label       : chr &quot;ISO 3166-1 numeric country code&quot;
+##    ..@ format.stata: chr &quot;%4.0f&quot;
+##    ..@ labels      : Named num [1:2] -4 360
+##    .. ..- attr(*, &quot;names&quot;)= chr [1:2] &quot;Not asked in survey&quot; &quot;Indonesia&quot;
+##  $ B_COUNTRY_ALPHA: chr [1:3200] &quot;IDN&quot; &quot;IDN&quot; &quot;IDN&quot; &quot;IDN&quot; ...
+##   ..- attr(*, &quot;label&quot;)= chr &quot;ISO 3166-1 alpha-3 country code&quot;
+##   ..- attr(*, &quot;format.stata&quot;)= chr &quot;%8s&quot;
+##  $ C_COW_NUM      : dbl+lbl [1:3200] 850, 850, 850, 850, 850, 850, 850, 850, 850, 850, 850...
+##    ..@ label       : chr &quot;CoW country code numeric&quot;
+##    ..@ format.stata: chr &quot;%9.0f&quot;
+##    ..@ labels      : Named num 850
+##    .. ..- attr(*, &quot;names&quot;)= chr &quot;INS Indonesia&quot;
+##  $ C_COW_ALPHA    : chr [1:3200] &quot;INS&quot; &quot;INS&quot; &quot;INS&quot; &quot;INS&quot; ...
+##   ..- attr(*, &quot;label&quot;)= chr &quot;CoW country code alpha&quot;
+##   ..- attr(*, &quot;format.stata&quot;)= chr &quot;%8s&quot;
+##  $ A_YEAR         : dbl+lbl [1:3200] 2018, 2018, 2018, 2018, 2018, 2018, 2018, 2018, 2018,...
+##    ..@ label       : chr &quot;Year of survey&quot;
+##    ..@ format.stata: chr &quot;%4.0f&quot;
+##    ..@ labels      : Named num [1:4] 2017 2018 2019 2020
+##    .. ..- attr(*, &quot;names&quot;)= chr [1:4] &quot;2017&quot; &quot;2018&quot; &quot;2019&quot; &quot;2020&quot;
+##  $ D_INTERVIEW    : num [1:3200] 3.6e+08 3.6e+08 3.6e+08 3.6e+08 3.6e+08 ...
+##   ..- attr(*, &quot;label&quot;)= chr &quot;Interview ID&quot;
+##   ..- attr(*, &quot;format.stata&quot;)= chr &quot;%13.0f&quot;
+##  $ J_INTDATE      : dbl+lbl [1:3200] 20180809, 20180810, 20180809, 20180810, 20180810, 201...
+##    ..@ label       : chr &quot;Date of interview&quot;
+##    ..@ format.stata: chr &quot;%8.0f&quot;
+##    ..@ labels      : Named num [1:2] -4 -5
+##    .. ..- attr(*, &quot;names&quot;)= chr [1:2] &quot;Not asked in survey&quot; &quot;No answer; Missing&quot;
+##  $ Q_MODE         : dbl+lbl [1:3200] 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,...
+##    ..@ label       : chr &quot;Mode of data collection&quot;
+##    ..@ format.stata: chr &quot;%8.0f&quot;
+##    ..@ labels      : Named num [1:5] 1 2 3 4 5
+##    .. ..- attr(*, &quot;names&quot;)= chr [1:5] &quot;Computer-Assisted Personal Interviewing (CAPI){CAPI}&quot; &quot;Paper-and-Pencil Interviewing (PAPI){PAPI}&quot; &quot;Computer-Assisted Web Interviewing (CAWI){CAWI}&quot; &quot;Mail/Post&quot; ...
+##  $ N_REGION_ISO   : dbl+lbl [1:3200] 360007, 360007, 360007, 360007, 360007, 360007, 36000...
+##    ..@ label       : chr &quot;Region ISO 3166-2&quot;
+##    ..@ format.stata: chr &quot;%6.0f&quot;
+##    ..@ labels      : Named num [1:7] -4 360001 360002 360004 360005 ...
+##    .. ..- attr(*, &quot;names&quot;)= chr [1:7] &quot;Not asked&quot; &quot;ID-JW Jawa&quot; &quot;ID-KA Kalimantan&quot; &quot;ID-NU Nusa Tenggara&quot; ...
+##  $ N_REGION_WVS   : dbl+lbl [1:3200] 360026, 360026, 360026, 360026, 360026, 360026, 36002...
+##    ..@ label       : chr &quot;Region country specific&quot;
+##    ..@ format.stata: chr &quot;%10.0f&quot;
+##    ..@ labels      : Named num [1:7] -4 360021 360022 360023 360024 ...
+##    .. ..- attr(*, &quot;names&quot;)= chr [1:7] &quot;Not asked&quot; &quot;ID-JW Jawa&quot; &quot;ID-KA Kalimantan&quot; &quot;ID-NU Nusa Tenggara&quot; ...
+##  $ G_TOWNSIZE     : dbl+lbl [1:3200] 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,...
+##    ..@ label       : chr &quot;Settlement size_8 groups&quot;
+##    ..@ format.stata: chr &quot;%9.0f&quot;
+##    ..@ labels      : Named num [1:10] 1 2 3 4 5 6 7 8 -5 -4
+##    .. ..- attr(*, &quot;names&quot;)= chr [1:10] &quot;Under 2,000&quot; &quot;2,000-5,000&quot; &quot;5,000-10,000&quot; &quot;10,000-20,000&quot; ...
+##  $ G_TOWNSIZE2    : dbl+lbl [1:3200] 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,...
+##    ..@ label       : chr &quot;Settlement size_5 groups&quot;
+##    ..@ format.stata: chr &quot;%9.0f&quot;
+##    ..@ labels      : Named num [1:7] 1 2 3 4 5 -5 -4
+##    .. ..- attr(*, &quot;names&quot;)= chr [1:7] &quot;Under 5,000&quot; &quot;5000-20000&quot; &quot;20000-100000&quot; &quot;100000-500000&quot; ...
+##  $ H_SETTLEMENT   : dbl+lbl [1:3200] 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5,...
+##    ..@ label       : chr &quot;Settlement type&quot;
+##    ..@ format.stata: chr &quot;%9.0f&quot;
+##    ..@ labels      : Named num [1:7] 1 2 3 4 5 -4 -5
+##    .. ..- attr(*, &quot;names&quot;)= chr [1:7] &quot;Capital city&quot; &quot;Regional center&quot; &quot;District center&quot; &quot;Another city, town (not a regional or district center){Another city, town}&quot; ...
+##  $ H_URBRURAL     : dbl+lbl [1:3200] 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,...
+##    ..@ label       : chr &quot;Urban-Rural&quot;
+##    ..@ format.stata: chr &quot;%9.0f&quot;
+##    ..@ labels      : Named num [1:4] 1 2 -5 -4
+##    .. ..- attr(*, &quot;names&quot;)= chr [1:4] &quot;Urban&quot; &quot;Rural&quot; &quot;No answer; Missing&quot; &quot;Not asked&quot;
+##  $ I_PSU          : dbl+lbl [1:3200] 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2,...
+##    ..@ label       : chr &quot;Primary Sampling Unit ID&quot;
+##    ..@ format.stata: chr &quot;%8.0f&quot;
+##    ..@ labels      : Named num -4
+##    .. ..- attr(*, &quot;names&quot;)= chr &quot;Not delivered&quot;
+##  $ O1_LONGITUDE   : dbl+lbl [1:3200] 97.1, 97.1, 97.1, 97.1, 97.1, 97.1, 97.1, 97.1, 97.1,...
+##    ..@ label       : chr &quot;Geographical Coordinates - Longitude&quot;
+##    ..@ format.stata: chr &quot;%10.2f&quot;
+##    ..@ labels      : Named num -999
+##    .. ..- attr(*, &quot;names&quot;)= chr &quot;Not available&quot;
+##  $ O2_LATITUDE    : dbl+lbl [1:3200] 3.91, 3.91, 3.91, 3.91, 3.91, 3.91, 3.91, 3.91, 3.91,...
+##    ..@ label       : chr &quot;Geographical Coordinates - Latitude&quot;
+##    ..@ format.stata: chr &quot;%10.2f&quot;
+##    ..@ labels      : Named num -999
+##    .. ..- attr(*, &quot;names&quot;)= chr &quot;Not available&quot;
+##  $ S_INTLANGUAGE  : dbl+lbl [1:3200] 1890, 1890, 1890, 1890, 1890, 1890, 1890, 1890, 1890,...
+##    ..@ label       : chr &quot;Language in which interview was conducted&quot;
+##    ..@ format.stata: chr &quot;%7.0f&quot;
+##    ..@ labels      : Named num [1:2] -4 1890
+##    .. ..- attr(*, &quot;names&quot;)= chr [1:2] &quot;Not asked&quot; &quot;Indonesian&quot;
+##  $ E_RESPINT      : dbl+lbl [1:3200] 2, 2, 2, 2, 2, 2, 1, 1, 2, 1, 1, 2, 1, 1, 1, 2, 2, 2,...
+##    ..@ label       : chr &quot;Respondent interested during the interview&quot;
+##    ..@ format.stata: chr &quot;%9.0f&quot;
+##    ..@ labels      : Named num [1:5] 1 2 3 -5 -4
+##    .. ..- attr(*, &quot;names&quot;)= chr [1:5] &quot;Respondent was very interested&quot; &quot;Respondent was somewhat interested&quot; &quot;Respondent was not interested&quot; &quot;No answer; Missing&quot; ...
+##  $ F_INTPRIVACY   : dbl+lbl [1:3200] 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2,...
+##    ..@ label       : chr &quot;Interview privacy&quot;
+##    ..@ format.stata: chr &quot;%9.0f&quot;
+##    ..@ labels      : Named num [1:4] 1 2 -2 -4
+##    .. ..- attr(*, &quot;names&quot;)= chr [1:4] &quot;There were no other people around who could follow the interview{No other}&quot; &quot;There were other people around who could follow the interview{Other people}&quot; &quot;No answer&quot; &quot;Not asked in survey&quot;
+##  $ W_WEIGHT       : dbl+lbl [1:3200] 0.180, 0.111, 0.180, 0.161, 0.101, 0.102, 0.102, 0.11...
+##    ..@ label       : chr &quot;Weight&quot;
+##    ..@ format.stata: chr &quot;%13.9f&quot;
+##    ..@ labels      : Named num [1:2] 1 0
+##    .. ..- attr(*, &quot;names&quot;)= chr [1:2] &quot;No weighting&quot; &quot;UNDEFINED&quot;
+##  $ S018           : dbl+lbl [1:3200] 0.0564, 0.0345, 0.0564, 0.0504, 0.0314, 0.0317, 0.031...
+##    ..@ label       : chr &quot;Equilibrated weight-1000&quot;
+##    ..@ format.stata: chr &quot;%11.7f&quot;
+##    ..@ labels      : Named num [1:2] 1 0
+##    .. ..- attr(*, &quot;names&quot;)= chr [1:2] &quot;No weighting&quot; &quot;Undefined&quot;
+##  $ S019           : dbl+lbl [1:3200] 0.0845, 0.0518, 0.0845, 0.0755, 0.0472, 0.0476, 0.047...
+##    ..@ label       : chr &quot;Equilibrated weight-1500&quot;
+##    ..@ format.stata: chr &quot;%11.7f&quot;
+##    ..@ labels      : Named num [1:2] 1 0
+##    .. ..- attr(*, &quot;names&quot;)= chr [1:2] &quot;No weighting&quot; &quot;Undefined&quot;
+##  $ Q1             : dbl+lbl [1:3200] 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,...
+##    ..@ label       : chr &quot;Important in life: Family&quot;
+##    ..@ format.stata: chr &quot;%9.0f&quot;
+##    ..@ labels      : Named num [1:8] 1 2 3 4 -1 -2 -4 -5
+##    .. ..- attr(*, &quot;names&quot;)= chr [1:8] &quot;Very important&quot; &quot;Rather important&quot; &quot;Not very important&quot; &quot;Not at all important&quot; ...
+##  $ Q2             : dbl+lbl [1:3200] 2, 2, 1, 2, 2, 1, 2, 2, 1, 2, 1, 2, 2, 2, 2, 3, 1, 1,...
+##    ..@ label       : chr &quot;Important in life: Friends&quot;
+##    ..@ format.stata: chr &quot;%9.0f&quot;
+##    ..@ labels      : Named num [1:8] 1 2 3 4 -1 -2 -4 -5
+##    .. ..- attr(*, &quot;names&quot;)= chr [1:8] &quot;Very important&quot; &quot;Rather important&quot; &quot;Not very important&quot; &quot;Not at all important&quot; ...
+##  $ Q3             : dbl+lbl [1:3200] 2, 2, 1, 2, 2, 1, 1, 2, 1, 2, 2, 3, 3, 1, 1, 3, 3, 1,...
+##    ..@ label       : chr &quot;Important in life: Leisure time&quot;
+##    ..@ format.stata: chr &quot;%9.0f&quot;
+##    ..@ labels      : Named num [1:8] 1 2 3 4 -1 -2 -4 -5
+##    .. ..- attr(*, &quot;names&quot;)= chr [1:8] &quot;Very important&quot; &quot;Rather important&quot; &quot;Not very important&quot; &quot;Not at all important&quot; ...
+##  $ Q4             : dbl+lbl [1:3200] 1, 3, 4, 4, 2, 2, 2, 4, 3, 3, 3, 4, 4, 1, 1, 3, 4, 1,...
+##    ..@ label       : chr &quot;Important in life: Politics&quot;
+##    ..@ format.stata: chr &quot;%9.0f&quot;
+##    ..@ labels      : Named num [1:8] 1 2 3 4 -1 -2 -4 -5
+##    .. ..- attr(*, &quot;names&quot;)= chr [1:8] &quot;Very important&quot; &quot;Rather important&quot; &quot;Not very important&quot; &quot;Not at all important&quot; ...
+##  $ Q5             : dbl+lbl [1:3200] 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1,...
+##    ..@ label       : chr &quot;Important in life: Work&quot;
+##    ..@ format.stata: chr &quot;%9.0f&quot;
+##    ..@ labels      : Named num [1:8] 1 2 3 4 -1 -2 -4 -5
+##    .. ..- attr(*, &quot;names&quot;)= chr [1:8] &quot;Very important&quot; &quot;Rather important&quot; &quot;Not very important&quot; &quot;Not at all important&quot; ...
+##  $ Q6             : dbl+lbl [1:3200] 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,...
+##    ..@ label       : chr &quot;Important in life: Religion&quot;
+##    ..@ format.stata: chr &quot;%9.0f&quot;
+##    ..@ labels      : Named num [1:8] 1 2 3 4 -1 -2 -4 -5
+##    .. ..- attr(*, &quot;names&quot;)= chr [1:8] &quot;Very important&quot; &quot;Rather important&quot; &quot;Not very important&quot; &quot;Not at all important&quot; ...
+##  $ Q7             : dbl+lbl [1:3200] 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,...
+##    ..@ label       : chr &quot;Important child qualities: good manners&quot;
+##    ..@ format.stata: chr &quot;%9.0f&quot;
+##    ..@ labels      : Named num [1:6] 2 1 -1 -2 -4 -5
+##    .. ..- attr(*, &quot;names&quot;)= chr [1:6] &quot;Not mentioned&quot; &quot;Important&quot; &quot;Dont know&quot; &quot;No answer&quot; ...
+##  $ Q8             : dbl+lbl [1:3200] 1, 2, 2, 2, 2, 2, 1, 1, 1, 1, 2, 2, 1, 2, 1, 1, 1, 2,...
+##    ..@ label       : chr &quot;Important child qualities: independence&quot;
+##    ..@ format.stata: chr &quot;%9.0f&quot;
+##    ..@ labels      : Named num [1:5] 1 2 -1 -2 -4
+##    .. ..- attr(*, &quot;names&quot;)= chr [1:5] &quot;Important&quot; &quot;Not mentioned&quot; &quot;Dont know&quot; &quot;No answer&quot; ...
+##  $ Q9             : dbl+lbl [1:3200] 1, 1, 2, 2, 1, 2, 1, 1, 1, 1, 2, 1, 1, 2, 2, 2, 2, 1,...
+##    ..@ label       : chr &quot;Important child qualities: hard work&quot;
+##    ..@ format.stata: chr &quot;%9.0f&quot;
+##    ..@ labels      : Named num [1:5] 1 2 -1 -2 -4
+##    .. ..- attr(*, &quot;names&quot;)= chr [1:5] &quot;Important&quot; &quot;Not mentioned&quot; &quot;Dont know&quot; &quot;No answer&quot; ...
+##  $ Q10            : dbl+lbl [1:3200] 1, 1, 2, 1, 2, 2, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1,...
+##    ..@ label       : chr &quot;Important child qualities: feeling of responsibility&quot;
+##    ..@ format.stata: chr &quot;%9.0f&quot;
+##    ..@ labels      : Named num [1:5] 1 2 -1 -2 -4
+##    .. ..- attr(*, &quot;names&quot;)= chr [1:5] &quot;Important&quot; &quot;Not mentioned&quot; &quot;Dont know&quot; &quot;No answer&quot; ...
+##  $ Q11            : dbl+lbl [1:3200] 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,...
+##    ..@ label       : chr &quot;Important child qualities: imagination&quot;
+##    ..@ format.stata: chr &quot;%9.0f&quot;
+##    ..@ labels      : Named num [1:6] 1 2 -1 -2 -4 -5
+##    .. ..- attr(*, &quot;names&quot;)= chr [1:6] &quot;Important&quot; &quot;Not mentioned&quot; &quot;Dont know&quot; &quot;No answer&quot; ...
+##  $ Q12            : dbl+lbl [1:3200] 2, 1, 1, 1, 2, 1, 2, 2, 1, 2, 1, 1, 2, 2, 1, 2, 2, 1,...
+##    ..@ label       : chr &quot;Important child qualities: tolerance and respect for other people&quot;
+##    ..@ format.stata: chr &quot;%9.0f&quot;
+##    ..@ labels      : Named num [1:5] 1 2 -1 -2 -4
+##    .. ..- attr(*, &quot;names&quot;)= chr [1:5] &quot;Important&quot; &quot;Not mentioned&quot; &quot;Dont know&quot; &quot;No answer&quot; ...
+##  $ Q13            : dbl+lbl [1:3200] 2, 2, 2, 2, 1, 2, 2, 2, 2, 2, 2, 2, 1, 1, 2, 2, 2, 1,...
+##    ..@ label       : chr &quot;Important child qualities: thrift saving money and things&quot;
+##    ..@ format.stata: chr &quot;%9.0f&quot;
+##    ..@ labels      : Named num [1:6] 1 2 -1 -2 -4 -5
+##    .. ..- attr(*, &quot;names&quot;)= chr [1:6] &quot;Important&quot; &quot;Not mentioned&quot; &quot;Dont know&quot; &quot;No answer&quot; ...
+##  $ Q14            : dbl+lbl [1:3200] 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 2, 2, 1, 2, 2, 2, 2,...
+##    ..@ label       : chr &quot;Important child qualities: determination perseverance&quot;
+##    ..@ format.stata: chr &quot;%9.0f&quot;
+##    ..@ labels      : Named num [1:6] 1 2 -1 -2 -4 -5
+##    .. ..- attr(*, &quot;names&quot;)= chr [1:6] &quot;Important&quot; &quot;Not mentioned&quot; &quot;Dont know&quot; &quot;No answer&quot; ...
+##  $ Q15            : dbl+lbl [1:3200] 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 2, 2, 2, 2, 1, 1, 2,...
+##    ..@ label       : chr &quot;Important child qualities: religious faith&quot;
+##    ..@ format.stata: chr &quot;%9.0f&quot;
+##    ..@ labels      : Named num [1:6] 1 2 -1 -2 -4 -5
+##    .. ..- attr(*, &quot;names&quot;)= chr [1:6] &quot;Important&quot; &quot;Not mentioned&quot; &quot;Dont know&quot; &quot;No answer&quot; ...
+##  $ Q16            : dbl+lbl [1:3200] 2, 2, 1, 2, 2, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,...
+##    ..@ label       : chr &quot;Important child qualities: unselfishness&quot;
+##    ..@ format.stata: chr &quot;%9.0f&quot;
+##    ..@ labels      : Named num [1:6] 1 2 -1 -2 -4 -5
+##    .. ..- attr(*, &quot;names&quot;)= chr [1:6] &quot;Important&quot; &quot;Not mentioned&quot; &quot;Dont know&quot; &quot;No answer&quot; ...
+##  $ Q17            : dbl+lbl [1:3200] 2, 1, 1, 1, 1, 1, 2, 2, 2, 2, 1, 1, 2, 1, 1, 1, 1, 2,...
+##    ..@ label       : chr &quot;Important child qualities: obedience&quot;
+##    ..@ format.stata: chr &quot;%9.0f&quot;
+##    ..@ labels      : Named num [1:6] 1 2 -1 -2 -4 -5
+##    .. ..- attr(*, &quot;names&quot;)= chr [1:6] &quot;Important&quot; &quot;Not mentioned&quot; &quot;Dont know&quot; &quot;No answer&quot; ...
+##  $ Q18            : dbl+lbl [1:3200] 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,...
+##    ..@ label       : chr &quot;Neighbors: Drug addicts&quot;
+##    ..@ format.stata: chr &quot;%9.0f&quot;
+##    ..@ labels      : Named num [1:6] 1 2 -1 -2 -4 -5
+##    .. ..- attr(*, &quot;names&quot;)= chr [1:6] &quot;Mentioned&quot; &quot;Not mentioned&quot; &quot;Dont know&quot; &quot;No answer&quot; ...
+##  $ Q19            : dbl+lbl [1:3200] 2, 2, 2, 2, 1, 2, 2, 2, 2, 2, 2, 2, 1, 2, 1, 2, 2, 1,...
+##    ..@ label       : chr &quot;Neighbors: People of a different race&quot;
+##    ..@ format.stata: chr &quot;%9.0f&quot;
+##    ..@ labels      : Named num [1:6] 1 2 -1 -2 -4 -5
+##    .. ..- attr(*, &quot;names&quot;)= chr [1:6] &quot;Mentioned&quot; &quot;Not mentioned&quot; &quot;Dont know&quot; &quot;No answer&quot; ...
+##  $ Q20            : dbl+lbl [1:3200] 1, 1, 2, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2,...
+##    ..@ label       : chr &quot;Neighbors: People who have AIDS&quot;
+##    ..@ format.stata: chr &quot;%9.0f&quot;
+##    ..@ labels      : Named num [1:6] 1 2 -1 -2 -4 -5
+##    .. ..- attr(*, &quot;names&quot;)= chr [1:6] &quot;Mentioned&quot; &quot;Not mentioned&quot; &quot;Dont know&quot; &quot;No answer&quot; ...
+##  $ Q21            : dbl+lbl [1:3200] 2, 2, 2, 2, 2, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 2,...
+##    ..@ label       : chr &quot;Neighbors: Immigrants/foreign workers&quot;
+##    ..@ format.stata: chr &quot;%9.0f&quot;
+##    ..@ labels      : Named num [1:6] 1 2 -1 -2 -4 -5
+##    .. ..- attr(*, &quot;names&quot;)= chr [1:6] &quot;Mentioned&quot; &quot;Not mentioned&quot; &quot;Dont know&quot; &quot;No answer&quot; ...
+##  $ Q22            : dbl+lbl [1:3200] 1, 1, 2, 2, 1, 1, 1, 2, 1, 2, 1, 1, 1, 2, 1, 1, 1, 2,...
+##    ..@ label       : chr &quot;Neighbors: Homosexuals&quot;
+##    ..@ format.stata: chr &quot;%9.0f&quot;
+##    ..@ labels      : Named num [1:6] 1 2 -1 -2 -4 -5
+##    .. ..- attr(*, &quot;names&quot;)= chr [1:6] &quot;Mentioned&quot; &quot;Not mentioned&quot; &quot;Dont know&quot; &quot;No answer&quot; ...
+##  $ Q23            : dbl+lbl [1:3200] 2, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 2, 2, 2, 2,...
+##    ..@ label       : chr &quot;Neighbors: People of a different religion&quot;
+##    ..@ format.stata: chr &quot;%9.0f&quot;
+##    ..@ labels      : Named num [1:6] 1 2 -1 -2 -4 -5
+##    .. ..- attr(*, &quot;names&quot;)= chr [1:6] &quot;Mentioned&quot; &quot;Not mentioned&quot; &quot;Dont know&quot; &quot;No answer&quot; ...
+##  $ Q24            : dbl+lbl [1:3200] 2, 2, 1, 1, 2, 2, 1, 1, 2, 2, 1, 1, 2, 1, 1, 1, 1, 1,...
+##    ..@ label       : chr &quot;Neighbors: Heavy drinkers&quot;
+##    ..@ format.stata: chr &quot;%9.0f&quot;
+##    ..@ labels      : Named num [1:6] 1 2 -1 -2 -4 -5
+##    .. ..- attr(*, &quot;names&quot;)= chr [1:6] &quot;Mentioned&quot; &quot;Not mentioned&quot; &quot;Dont know&quot; &quot;No answer&quot; ...
+##  $ Q25            : dbl+lbl [1:3200] 1, 2, 1, 2, 1, 1, 2, 2, 2, 1, 1, 1, 1, 2, 1, 2, 1, 2,...
+##    ..@ label       : chr &quot;Neighbors: Unmarried couples living together&quot;
+##    ..@ format.stata: chr &quot;%9.0f&quot;
+##    ..@ labels      : Named num [1:6] 1 2 -1 -2 -4 -5
+##    .. ..- attr(*, &quot;names&quot;)= chr [1:6] &quot;Mentioned&quot; &quot;Not mentioned&quot; &quot;Dont know&quot; &quot;No answer&quot; ...
+##  $ Q26            : dbl+lbl [1:3200] 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1,...
+##    ..@ label       : chr &quot;Neighbors: People who speak a different language&quot;
+##    ..@ format.stata: chr &quot;%9.0f&quot;
+##    ..@ labels      : Named num [1:6] 1 2 -1 -2 -4 -5
+##    .. ..- attr(*, &quot;names&quot;)= chr [1:6] &quot;Mentioned&quot; &quot;Not mentioned&quot; &quot;Dont know&quot; &quot;No answer&quot; ...
+##  $ Q27            : dbl+lbl [1:3200] 2, 2, 2, 1, 1, 1, 1, 1, 2, 2, 1, 1, 1, 1, 2, 1, 1, 1,...
+##    ..@ label       : chr &quot;One of main goals in life has been to make my parents proud&quot;
+##    ..@ format.stata: chr &quot;%9.0f&quot;
+##    ..@ labels      : Named num [1:8] 1 2 3 4 -1 -2 -4 -5
+##    .. ..- attr(*, &quot;names&quot;)= chr [1:8] &quot;Agree strongly&quot; &quot;Agree&quot; &quot;Disagree&quot; &quot;Strongly disagree&quot; ...
+##  $ Q28            : dbl+lbl [1:3200] 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 4, 3, 3, 3, 3, 3, 3, 3,...
+##    ..@ label       : chr &quot;Pre-school child suffers with working mother&quot;
+##    ..@ format.stata: chr &quot;%9.0f&quot;
+##    ..@ labels      : Named num [1:8] 1 2 3 4 -1 -2 -4 -5
+##    .. ..- attr(*, &quot;names&quot;)= chr [1:8] &quot;Agree strongly&quot; &quot;Agree&quot; &quot;Disagree&quot; &quot;Strongly disagree&quot; ...
+##  $ Q29            : dbl+lbl [1:3200] 1, 2, 2, 3, 1, 2, 2, 2, 2, 2, 1, 1, 1, 2, 2, 1, 1, 1,...
+##    ..@ label       : chr &quot;Men make better political leaders than women do&quot;
+##    ..@ format.stata: chr &quot;%9.0f&quot;
+##    ..@ labels      : Named num [1:8] 1 2 3 4 -1 -2 -4 -5
+##    .. ..- attr(*, &quot;names&quot;)= chr [1:8] &quot;Agree strongly&quot; &quot;Agree&quot; &quot;Disagree&quot; &quot;Strongly disagree&quot; ...
+##  $ Q30            : dbl+lbl [1:3200] 1, 2, 3, 1, 3, 3, 3, 2, 2, 2, 3, 1, 1, 2, 3, 2, 1, 1,...
+##    ..@ label       : chr &quot;University is more important for a boy than for a girl&quot;
+##    ..@ format.stata: chr &quot;%9.0f&quot;
+##    ..@ labels      : Named num [1:8] 1 2 3 4 -1 -2 -4 -5
+##    .. ..- attr(*, &quot;names&quot;)= chr [1:8] &quot;Agree strongly&quot; &quot;Agree&quot; &quot;Disagree&quot; &quot;Strongly disagree&quot; ...
+##  $ Q31            : dbl+lbl [1:3200] 1, 2, 3, 2, 1, 2, 2, 1, 2, 2, 2, 1, 2, 2, 2, 3, 1, 2,...
+##    ..@ label       : chr &quot;Men make better business executives than women do&quot;
+##    ..@ format.stata: chr &quot;%9.0f&quot;
+##    ..@ labels      : Named num [1:8] 1 2 3 4 -1 -2 -4 -5
+##    .. ..- attr(*, &quot;names&quot;)= chr [1:8] &quot;Agree strongly&quot; &quot;Agree&quot; &quot;Disagree&quot; &quot;Strongly disagree&quot; ...
+##  $ Q32            : dbl+lbl [1:3200] 3, 2, 3, 1, 3, 2, 1, 2, 2, 2, 2, 1, 1, 3, 2, 2, 1, 1,...
+##    ..@ label       : chr &quot;Being a housewife just as fulfilling&quot;
+##    ..@ format.stata: chr &quot;%9.0f&quot;
+##    ..@ labels      : Named num [1:8] 1 2 3 4 -1 -2 -4 -5
+##    .. ..- attr(*, &quot;names&quot;)= chr [1:8] &quot;Agree strongly&quot; &quot;Agree&quot; &quot;Disagree&quot; &quot;Strongly disagree&quot; ...
+##  $ Q33            : dbl+lbl [1:3200] 2, 2, 2, 1, 2, 4, 2, 2, 4, 2, 2, 1, 1, 2, 2, 2, 1, 1,...
+##    ..@ label       : chr &quot;Jobs scarce: Men should have more right to a job than women&quot;
+##    ..@ format.stata: chr &quot;%9.0f&quot;
+##    ..@ labels      : Named num [1:9] 1 2 3 4 5 -1 -2 -4 -5
+##    .. ..- attr(*, &quot;names&quot;)= chr [1:9] &quot;Agree strongly&quot; &quot;Agree&quot; &quot;Neither agree nor disagree&quot; &quot;Disagree&quot; ...
+##  $ Q34            : dbl+lbl [1:3200] 1, 2, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 1, 2, 2, 2, 1, 2,...
+##    ..@ label       : chr &quot;Jobs scarce: Employers should give priority to (nation) people than immigrants&quot;
+##    ..@ format.stata: chr &quot;%9.0f&quot;
+##    ..@ labels      : Named num [1:9] 1 2 3 4 5 -1 -2 -4 -5
+##    .. ..- attr(*, &quot;names&quot;)= chr [1:9] &quot;Agree strongly&quot; &quot;Agree&quot; &quot;Neither agree nor disagree&quot; &quot;Disagree&quot; ...
+##  $ Q35            : dbl+lbl [1:3200] 4, 2, 4, 4, 2, 4, 5, 4, 2, 2, 4, 1, 3, 4, 2, 2, 4, 4,...
+##    ..@ label       : chr &quot;Problem if women have more income than husband&quot;
+##    ..@ format.stata: chr &quot;%9.0f&quot;
+##    ..@ labels      : Named num [1:9] 1 2 3 4 5 -1 -2 -4 -5
+##    .. ..- attr(*, &quot;names&quot;)= chr [1:9] &quot;Strongly agree&quot; &quot;Agree&quot; &quot;Neither agree nor disagree&quot; &quot;Disagree&quot; ...
+##  $ Q36            : dbl+lbl [1:3200] 4, 4, 4, 4, 4, 2, 5, 4, 4, 2, 5, 1, 4, 4, 4, 5, 4, 4,...
+##    ..@ label       : chr &quot;Homosexual couples are as good parents as other couples&quot;
+##    ..@ format.stata: chr &quot;%9.0f&quot;
+##    ..@ labels      : Named num [1:9] 1 2 3 4 5 -1 -2 -4 -5
+##    .. ..- attr(*, &quot;names&quot;)= chr [1:9] &quot;Agree strongly&quot; &quot;Agree&quot; &quot;Neither agree nor disagree&quot; &quot;Disagree&quot; ...
+##  $ Q37            : dbl+lbl [1:3200] 2, 2, 2, 4, 4, 2, 2, 2, 2, 2, 1, 1, 2, 2, 2, 2, 1, 4,...
+##    ..@ label       : chr &quot;Duty towards society to have children&quot;
+##    ..@ format.stata: chr &quot;%9.0f&quot;
+##    ..@ labels      : Named num [1:9] 1 2 3 4 5 -1 -2 -4 -5
+##    .. ..- attr(*, &quot;names&quot;)= chr [1:9] &quot;Agree strongly&quot; &quot;Agree&quot; &quot;Neither agree nor disagree&quot; &quot;Disagree&quot; ...
+##  $ Q38            : dbl+lbl [1:3200] 2, 2, 2, 1, 2, 1, 1, 2, 2, 2, 2, 2, 1, 2, 2, 4, 1, 2,...
+##    ..@ label       : chr &quot;It is children duty to take care of ill parent&quot;
+##    ..@ format.stata: chr &quot;%9.0f&quot;
+##    ..@ labels      : Named num [1:9] 1 2 3 4 5 -1 -2 -4 -5
+##    .. ..- attr(*, &quot;names&quot;)= chr [1:9] &quot;Agree strongly&quot; &quot;Agree&quot; &quot;Neither agree nor disagree&quot; &quot;Disagree&quot; ...
+##  $ Q39            : dbl+lbl [1:3200] 4, 4, 4, 4, 2, 2, 4, 4, 2, 4, 1, 4, 4, 4, 2, 2, 4, 4,...
+##    ..@ label       : chr &quot;People who don´t work turn lazy&quot;
+##    ..@ format.stata: chr &quot;%9.0f&quot;
+##    ..@ labels      : Named num [1:9] 1 2 3 4 5 -1 -2 -4 -5
+##    .. ..- attr(*, &quot;names&quot;)= chr [1:9] &quot;Strongly agree&quot; &quot;Agree&quot; &quot;Neither agree or disagree&quot; &quot;Disagree&quot; ...
+##  $ Q40            : dbl+lbl [1:3200] 1, 2, 4, 1, 4, 2, 2, 2, 2, 2, 2, 2, 5, 2, 2, 2, 4, 2,...
+##    ..@ label       : chr &quot;Work is a duty towards society&quot;
+##    ..@ format.stata: chr &quot;%9.0f&quot;
+##    ..@ labels      : Named num [1:9] 1 2 3 4 5 -1 -2 -4 -5
+##    .. ..- attr(*, &quot;names&quot;)= chr [1:9] &quot;Strongly agree&quot; &quot;Agree&quot; &quot;Neither agree or disagree&quot; &quot;Disagree&quot; ...
+##  $ Q41            : dbl+lbl [1:3200] 2, 2, 2, 2, 1, 1, 1, 2, 2, 2, 2, 2, 1, 2, 2, 2, 1, 2,...
+##    ..@ label       : chr &quot;Work should  always come first even if it means less spare time&quot;
+##    ..@ format.stata: chr &quot;%9.0f&quot;
+##    ..@ labels      : Named num [1:9] 1 2 3 4 5 -1 -2 -4 -5
+##    .. ..- attr(*, &quot;names&quot;)= chr [1:9] &quot;Agree strongly&quot; &quot;Agree&quot; &quot;Neither agree nor disagree&quot; &quot;Disagree&quot; ...
+##  $ Q42            : dbl+lbl [1:3200] 3, 2, 2, 2, 1, 3, 2, 1, 2, 2, 2, 2, 3, 2, 1, 2, 2, 2,...
+##    ..@ label       : chr &quot;Basic kinds of attitudes concerning society&quot;
+##    ..@ format.stata: chr &quot;%9.0f&quot;
+##    ..@ labels      : Named num [1:7] 1 2 3 -1 -2 -4 -5
+##    .. ..- attr(*, &quot;names&quot;)= chr [1:7] &quot;The entire way our society is organized must be radically changed by revolutionary action&quot; &quot;Our society must be gradually improved by reforms&quot; &quot;Our present society must be valiantly defended against all subversive forces&quot; &quot;Dont know&quot; ...
+##  $ Q43            : dbl+lbl [1:3200] 1, 1, 3, 3, 3, 2, 1, 1, 3, 1, 3, 1, 3, 1, 1, 3, 1, 1,...
+##    ..@ label       : chr &quot;Future changes: Less importance placed on work&quot;
+##    ..@ format.stata: chr &quot;%9.0f&quot;
+##    ..@ labels      : Named num [1:7] 1 2 3 -1 -2 -4 -5
+##    .. ..- attr(*, &quot;names&quot;)= chr [1:7] &quot;Good thing&quot; &quot;Dont mind&quot; &quot;Bad thing&quot; &quot;Dont know&quot; ...
+##  $ Q44            : dbl+lbl [1:3200] 1, 3, 2, 1, 1, 1, 2, 1, 1, 2, 2, 3, 1, 1, 2, 1, 1, 1,...
+##    ..@ label       : chr &quot;Future changes: More emphasis on technology&quot;
+##    ..@ format.stata: chr &quot;%9.0f&quot;
+##    ..@ labels      : Named num [1:7] 1 2 3 -1 -2 -4 -5
+##    .. ..- attr(*, &quot;names&quot;)= chr [1:7] &quot;Good thing&quot; &quot;Dont mind&quot; &quot;Bad thing&quot; &quot;Dont know&quot; ...
+##  $ Q45            : dbl+lbl [1:3200] 1, 3, 3, 1, 1, 2, 2, 1, 3, 1, 1, 1, 2, 1, 3, 1, 1, 1,...
+##    ..@ label       : chr &quot;Future changes: Greater respect for authority&quot;
+##    ..@ format.stata: chr &quot;%9.0f&quot;
+##    ..@ labels      : Named num [1:7] 1 2 3 -1 -2 -4 -5
+##    .. ..- attr(*, &quot;names&quot;)= chr [1:7] &quot;Good thing&quot; &quot;Dont mind&quot; &quot;Bad thing&quot; &quot;Dont know&quot; ...
+##  $ Q46            : dbl+lbl [1:3200] 1, 2, 1, 2, 2, 2, 3, 1, 3, 2, 1, 2, 1, 1, 2, 2, 1, 1,...
+##    ..@ label       : chr &quot;Feeling of happiness&quot;
+##    ..@ format.stata: chr &quot;%9.0f&quot;
+##    ..@ labels      : Named num [1:8] 1 2 3 4 -1 -2 -4 -5
+##    .. ..- attr(*, &quot;names&quot;)= chr [1:8] &quot;Very happy&quot; &quot;Quite happy&quot; &quot;Not very happy&quot; &quot;Not at all happy&quot; ...
+##  $ Q47            : dbl+lbl [1:3200] 2, 3, 2, 1, 2, 2, 1, 4, 3, 3, 2, 2, 3, 1, 1, 2, 1, 1,...
+##    ..@ label       : chr &quot;State of health (subjective)&quot;
+##    ..@ format.stata: chr &quot;%9.0f&quot;
+##    ..@ labels      : Named num [1:9] 1 2 3 4 5 -1 -2 -4 -5
+##    .. ..- attr(*, &quot;names&quot;)= chr [1:9] &quot;Very good&quot; &quot;Good&quot; &quot;Fair&quot; &quot;Poor&quot; ...
+##  $ Q48            : dbl+lbl [1:3200]  8,  7,  5, 10,  5, 10,  6,  5,  3,  8, 10, 10, 10,  ...
+##    ..@ label       : chr &quot;How much freedom of choice and control&quot;
+##    ..@ format.stata: chr &quot;%9.0f&quot;
+##    ..@ labels      : Named num [1:14] 10 9 8 7 6 5 4 3 2 1 ...
+##    .. ..- attr(*, &quot;names&quot;)= chr [1:14] &quot;A great deal&quot; &quot;9&quot; &quot;8&quot; &quot;7&quot; ...
+##  $ Q49            : dbl+lbl [1:3200]  8,  8,  5, 10,  9, 10,  3,  5,  4,  1, 10,  9,  1, 1...
+##    ..@ label       : chr &quot;Satisfaction with your life&quot;
+##    ..@ format.stata: chr &quot;%9.0f&quot;
+##    ..@ labels      : Named num [1:14] 10 9 8 7 6 5 4 3 2 1 ...
+##    .. ..- attr(*, &quot;names&quot;)= chr [1:14] &quot;Completely satisfied&quot; &quot;9&quot; &quot;8&quot; &quot;7&quot; ...
+##  $ Q50            : dbl+lbl [1:3200]  3,  4,  3, 10, 10, 10,  2,  3,  3,  2,  3,  5,  1, 1...
+##    ..@ label       : chr &quot;Satisfaction with financial situation of household&quot;
+##    ..@ format.stata: chr &quot;%9.0f&quot;
+##    ..@ labels      : Named num [1:14] 10 9 8 7 6 5 4 3 2 1 ...
+##    .. ..- attr(*, &quot;names&quot;)= chr [1:14] &quot;Satisfied&quot; &quot;9&quot; &quot;8&quot; &quot;7&quot; ...
+##  $ Q51            : dbl+lbl [1:3200] 3, 2, 2, 2, 2, 4, 1, 4, 2, 2, 2, 3, 4, 3, 4, 2, 4, 2,...
+##    ..@ label       : chr &quot;Frequency you/family (last 12 month): Gone without enough food to eat&quot;
+##    ..@ format.stata: chr &quot;%9.0f&quot;
+##    ..@ labels      : Named num [1:8] 1 2 3 4 -1 -2 -4 -5
+##    .. ..- attr(*, &quot;names&quot;)= chr [1:8] &quot;Often&quot; &quot;Sometimes&quot; &quot;Rarely&quot; &quot;Never&quot; ...
+##  $ Q52            : dbl+lbl [1:3200] 4, 2, 4, 3, 4, 4, 3, 4, 2, 4, 4, 4, 4, 4, 4, 4, 4, 4,...
+##    ..@ label       : chr &quot;Frequency you/family (last 12 month): Felt unsafe from crime in your own home&quot;
+##    ..@ format.stata: chr &quot;%9.0f&quot;
+##    ..@ labels      : Named num [1:8] 1 2 3 4 -1 -2 -4 -5
+##    .. ..- attr(*, &quot;names&quot;)= chr [1:8] &quot;Often&quot; &quot;Sometimes&quot; &quot;Rarely&quot; &quot;Never&quot; ...
+##  $ Q53            : dbl+lbl [1:3200] 1, 2, 1, 3, 2, 4, 2, 4, 2, 1, 3, 2, 3, 4, 4, 2, 3, 4,...
+##    ..@ label       : chr &quot;Frequency you/family (last 12 month): Gone without needed medicine or treatment &quot;
+##    ..@ format.stata: chr &quot;%9.0f&quot;
+##    ..@ labels      : Named num [1:8] 1 2 3 4 -1 -2 -4 -5
+##    .. ..- attr(*, &quot;names&quot;)= chr [1:8] &quot;Often&quot; &quot;Sometimes&quot; &quot;Rarely&quot; &quot;Never&quot; ...
+##  $ Q54            : dbl+lbl [1:3200] 2, 2, 3, 2, 2, 4, 1, 4, 2, 2, 2, 2, 2, 4, 2, 2, 3, 4,...
+##    ..@ label       : chr &quot;Frequency you/family (last 12 month): Gone without a cash income&quot;
+##    ..@ format.stata: chr &quot;%9.0f&quot;
+##    ..@ labels      : Named num [1:8] 1 2 3 4 -1 -2 -4 -5
+##    .. ..- attr(*, &quot;names&quot;)= chr [1:8] &quot;Often&quot; &quot;Sometimes&quot; &quot;Rarely&quot; &quot;Never&quot; ...
+##  $ Q55            : dbl+lbl [1:3200] 3, 2, 3, 4, 4, 4, 3, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4,...
+##    ..@ label       : chr &quot;In the last 12 month, how often have you or your family: Gone without a safe she&quot;
+##    ..@ format.stata: chr &quot;%9.0f&quot;
+##    ..@ labels      : Named num [1:8] 1 2 3 4 -1 -2 -4 -5
+##    .. ..- attr(*, &quot;names&quot;)= chr [1:8] &quot;Often&quot; &quot;Sometimes&quot; &quot;Rarely&quot; &quot;Never&quot; ...
+##  $ Q56            : dbl+lbl [1:3200] 1, 1, 3, 1, 2, 1, 1, 1, 3, 1, 3, 1, 3, 1, 2, 2, 3, 1,...
+##    ..@ label       : chr &quot;Standard of living comparing with your parents&quot;
+##    ..@ format.stata: chr &quot;%9.0f&quot;
+##    ..@ labels      : Named num [1:7] 1 2 3 -1 -2 -4 -5
+##    .. ..- attr(*, &quot;names&quot;)= chr [1:7] &quot;Better off&quot; &quot;Worse off&quot; &quot;Or about the same&quot; &quot;Dont know&quot; ...
+##  $ Q57            : dbl+lbl [1:3200] 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,...
+##    ..@ label       : chr &quot;Most people can be trusted&quot;
+##    ..@ format.stata: chr &quot;%9.0f&quot;
+##    ..@ labels      : Named num [1:6] 1 2 -1 -2 -4 -5
+##    .. ..- attr(*, &quot;names&quot;)= chr [1:6] &quot;Most people can be trusted&quot; &quot;Need to be very careful&quot; &quot;Dont know&quot; &quot;No answer&quot; ...
+##  $ Q58            : dbl+lbl [1:3200] 1, 2, 1, 1, 2, 1, 1, 2, 1, 2, 1, 1, 3, 2, 1, 2, 1, 1,...
+##    ..@ label       : chr &quot;Trust: Your family&quot;
+##    ..@ format.stata: chr &quot;%9.0f&quot;
+##    ..@ labels      : Named num [1:8] 1 2 3 4 -1 -2 -4 -5
+##    .. ..- attr(*, &quot;names&quot;)= chr [1:8] &quot;Trust completely&quot; &quot;Trust somewhat&quot; &quot;Do not trust very much&quot; &quot;Do not trust at all&quot; ...
+##  $ Q59            : dbl+lbl [1:3200] 2, 3, 2, 1, 3, 1, 2, 3, 3, 2, 3, 3, 4, 3, 2, 3, 4, 1,...
+##    ..@ label       : chr &quot;Trust: Your neighborhood&quot;
+##    ..@ format.stata: chr &quot;%9.0f&quot;
+##    ..@ labels      : Named num [1:8] 1 2 3 4 -1 -2 -4 -5
+##    .. ..- attr(*, &quot;names&quot;)= chr [1:8] &quot;Trust completely&quot; &quot;Trust somewhat&quot; &quot;Do not trust very much&quot; &quot;Do not trust at all&quot; ...
+##  $ Q60            : dbl+lbl [1:3200] 3, 3, 2, 1, 4, 2, 3, 3, 2, 2, 2, 3, 2, 4, 3, 2, 3, 1,...
+##    ..@ label       : chr &quot;Trust: People you know personally&quot;
+##    ..@ format.stata: chr &quot;%9.0f&quot;
+##    ..@ labels      : Named num [1:8] 1 2 3 4 -1 -2 -4 -5
+##    .. ..- attr(*, &quot;names&quot;)= chr [1:8] &quot;Trust completely&quot; &quot;Trust somewhat&quot; &quot;Do not trust very much&quot; &quot;Do not trust at all&quot; ...
+##  $ Q61            : dbl+lbl [1:3200] 4, 4, 3, 2, 4, 3, 4, 4, 3, 4, 4, 4, 3, 4, 4, 3, 4, 4,...
+##    ..@ label       : chr &quot;Trust: People you meet for the first time&quot;
+##    ..@ format.stata: chr &quot;%9.0f&quot;
+##    ..@ labels      : Named num [1:8] 1 2 3 4 -1 -2 -4 -5
+##    .. ..- attr(*, &quot;names&quot;)= chr [1:8] &quot;Trust completely&quot; &quot;Trust somewhat&quot; &quot;Do not trust very much&quot; &quot;Do not trust at all&quot; ...
+##  $ Q62            : dbl+lbl [1:3200] 1, 4, 4, 4, 4, 3, 4, 3, 4, 4, 4, 4, 4, 4, 3, 3, 4, 3,...
+##    ..@ label       : chr &quot;Trust: People of another religion&quot;
+##    ..@ format.stata: chr &quot;%9.0f&quot;
+##    ..@ labels      : Named num [1:8] 1 2 3 4 -1 -2 -4 -5
+##    .. ..- attr(*, &quot;names&quot;)= chr [1:8] &quot;Trust completely&quot; &quot;Trust somewhat&quot; &quot;Do not trust very much&quot; &quot;Do not trust at all&quot; ...
+##  $ Q63            : dbl+lbl [1:3200] 3, 4, 4, 4, 4, 3, 4, 3, 2, 4, 3, 4, 4, 4, 3, 3, 4, 4,...
+##    ..@ label       : chr &quot;Trust: People of another nationality&quot;
+##    ..@ format.stata: chr &quot;%9.0f&quot;
+##    ..@ labels      : Named num [1:8] 1 2 3 4 -1 -2 -4 -5
+##    .. ..- attr(*, &quot;names&quot;)= chr [1:8] &quot;Trust completely&quot; &quot;Trust somewhat&quot; &quot;Do not trust very much&quot; &quot;Do not trust at all&quot; ...
+##  $ Q64            : dbl+lbl [1:3200] 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,...
+##    ..@ label       : chr &quot;Confidence: Churches&quot;
+##    ..@ format.stata: chr &quot;%9.0f&quot;
+##    ..@ labels      : Named num [1:8] 1 2 3 4 -1 -2 -4 -5
+##    .. ..- attr(*, &quot;names&quot;)= chr [1:8] &quot;A great deal&quot; &quot;Quite a lot&quot; &quot;Not very much&quot; &quot;None at all&quot; ...
+##  $ Q65            : dbl+lbl [1:3200] 1, 2, 1, 1, 1, 1, 3, 1, 1, 1, 2, 2, 2, 1, 1, 3, 3, 1,...
+##    ..@ label       : chr &quot;Confidence: Armed Forces&quot;
+##    ..@ format.stata: chr &quot;%9.0f&quot;
+##    ..@ labels      : Named num [1:8] 1 2 3 4 -1 -2 -4 -5
+##    .. ..- attr(*, &quot;names&quot;)= chr [1:8] &quot;A great deal&quot; &quot;Quite a lot&quot; &quot;Not very much&quot; &quot;None at all&quot; ...
+##  $ Q66            : dbl+lbl [1:3200] 3, 3, 1, 1, 2, 2, 3, 3, 3, 3, 3, 3, 3, 1, 1, 3, 3, 1,...
+##    ..@ label       : chr &quot;Confidence: The Press&quot;
+##    ..@ format.stata: chr &quot;%9.0f&quot;
+##    ..@ labels      : Named num [1:8] 1 2 3 4 -1 -2 -4 -5
+##    .. ..- attr(*, &quot;names&quot;)= chr [1:8] &quot;A great deal&quot; &quot;Quite a lot&quot; &quot;Not very much&quot; &quot;None at all&quot; ...
+##  $ Q67            : dbl+lbl [1:3200] 3, 2, 1, 1, 3, 2, 3, 2, 3, 3, 3, 4, 4, 3, 2, 3, 1, 1,...
+##    ..@ label       : chr &quot;Confidence: Television&quot;
+##    ..@ format.stata: chr &quot;%9.0f&quot;
+##    ..@ labels      : Named num [1:8] 1 2 3 4 -1 -2 -4 -5
+##    .. ..- attr(*, &quot;names&quot;)= chr [1:8] &quot;A great deal&quot; &quot;Quite a lot&quot; &quot;Not very much&quot; &quot;None at all&quot; ...
+##  $ Q68            : dbl+lbl [1:3200] 2, 2, 1, 1, 2, 1, 2, 2, 3, 3, 2, 4, 2, 3, 2, 3, 3, 2,...
+##    ..@ label       : chr &quot;Confidence: Labor Unions&quot;
+##    ..@ format.stata: chr &quot;%9.0f&quot;
+##    ..@ labels      : Named num [1:8] 1 2 3 4 -1 -2 -4 -5
+##    .. ..- attr(*, &quot;names&quot;)= chr [1:8] &quot;A great deal&quot; &quot;Quite a lot&quot; &quot;Not very much&quot; &quot;None at all&quot; ...
+##  $ Q69            : dbl+lbl [1:3200] 1, 2, 1, 1, 2, 2, 3, 1, 1, 2, 3, 2, 1, 3, 1, 3, 3, 1,...
+##    ..@ label       : chr &quot;Confidence: The Police&quot;
+##    ..@ format.stata: chr &quot;%9.0f&quot;
+##    ..@ labels      : Named num [1:8] 1 2 3 4 -1 -2 -4 -5
+##    .. ..- attr(*, &quot;names&quot;)= chr [1:8] &quot;A great deal&quot; &quot;Quite a lot&quot; &quot;Not very much&quot; &quot;None at all&quot; ...
+##  $ Q70            : dbl+lbl [1:3200] 1, 2, 1, 1, 1, 3, 3, 2, 3, 2, 2, 1, 1, 1, 2, 2, 3, 1,...
+##    ..@ label       : chr &quot;Confidence: Justice System/Courts&quot;
+##    ..@ format.stata: chr &quot;%9.0f&quot;
+##    ..@ labels      : Named num [1:8] 1 2 3 4 -1 -2 -4 -5
+##    .. ..- attr(*, &quot;names&quot;)= chr [1:8] &quot;A great deal&quot; &quot;Quite a lot&quot; &quot;Not very much&quot; &quot;None at all&quot; ...
+##  $ Q71            : dbl+lbl [1:3200] 3, 1, 1, 1, 1, 2, 3, 1, 3, 2, 2, 2, 3, 1, 1, 3, 1, 1,...
+##    ..@ label       : chr &quot;Confidence: The Government&quot;
+##    ..@ format.stata: chr &quot;%9.0f&quot;
+##    ..@ labels      : Named num [1:8] 1 2 3 4 -1 -2 -4 -5
+##    .. ..- attr(*, &quot;names&quot;)= chr [1:8] &quot;A great deal&quot; &quot;Quite a lot&quot; &quot;Not very much&quot; &quot;None at all&quot; ...
+##  $ Q72            : dbl+lbl [1:3200] 2, 4, 3, 2, 1, 3, 3, 3, 4, 2, 3, 3, 2, 1, 2, 3, 3, 2,...
+##    ..@ label       : chr &quot;Confidence: The Political Parties&quot;
+##    ..@ format.stata: chr &quot;%9.0f&quot;
+##    ..@ labels      : Named num [1:8] 1 2 3 4 -1 -2 -4 -5
+##    .. ..- attr(*, &quot;names&quot;)= chr [1:8] &quot;A great deal&quot; &quot;Quite a lot&quot; &quot;Not very much&quot; &quot;None at all&quot; ...
+##  $ Q73            : dbl+lbl [1:3200] 3, 3, 1, 1, 1, 2, 4, 1, 4, 2, 2, 3, 3, 3, 2, 3, 1, 1,...
+##    ..@ label       : chr &quot;Confidence: Parliament&quot;
+##    ..@ format.stata: chr &quot;%9.0f&quot;
+##    ..@ labels      : Named num [1:8] 1 2 3 4 -1 -2 -4 -5
+##    .. ..- attr(*, &quot;names&quot;)= chr [1:8] &quot;A great deal&quot; &quot;Quite a lot&quot; &quot;Not very much&quot; &quot;None at all&quot; ...
+##  $ Q74            : dbl+lbl [1:3200] 2, 2, 1, 1, 2, 2, 3, 1, 3, 3, 2, 2, 2, 3, 1, 3, 2, 2,...
+##    ..@ label       : chr &quot;Confidence: The Civil Services&quot;
+##    ..@ format.stata: chr &quot;%9.0f&quot;
+##    ..@ labels      : Named num [1:8] 1 2 3 4 -1 -2 -4 -5
+##    .. ..- attr(*, &quot;names&quot;)= chr [1:8] &quot;A great deal&quot; &quot;Quite a lot&quot; &quot;Not very much&quot; &quot;None at all&quot; ...
+##  $ Q75            : dbl+lbl [1:3200] 1, 2, 1, 1, 2, 2, 2, 2, 1, 2, 3, 1, 2, 3, 1, 2, 1, 1,...
+##    ..@ label       : chr &quot;Confidence: Universities&quot;
+##    ..@ format.stata: chr &quot;%9.0f&quot;
+##    ..@ labels      : Named num [1:8] 1 2 3 4 -1 -2 -4 -5
+##    .. ..- attr(*, &quot;names&quot;)= chr [1:8] &quot;A great deal&quot; &quot;Quite a lot&quot; &quot;Not very much&quot; &quot;None at all&quot; ...
+##  $ Q76            : dbl+lbl [1:3200] 1, 2, 1, 1, 1, 2, 2, 3, 3, 2, 3, 3, 3, 1, 2, 3, 1, 1,...
+##    ..@ label       : chr &quot;Confidence: Elections&quot;
+##    ..@ format.stata: chr &quot;%9.0f&quot;
+##    ..@ labels      : Named num [1:8] 1 2 3 4 -1 -2 -4 -5
+##    .. ..- attr(*, &quot;names&quot;)= chr [1:8] &quot;A great deal&quot; &quot;Quite a lot&quot; &quot;Not very much&quot; &quot;None at all&quot; ...
+##   [list output truncated]
+##  - attr(*, &quot;label&quot;)= chr &quot;WVS_Wave_7_dta_v1_4.dta&quot;</code></pre>
+<pre class="r"><code>## 4. Membuat data frame untuk analisis yang kita butuhkan
+
+library(tidyverse)</code></pre>
+<pre><code>## -- Attaching packages ----------------------------- tidyverse 1.3.0 --</code></pre>
+<pre><code>## v ggplot2 3.3.2     v purrr   0.3.4
+## v tibble  3.0.3     v dplyr   1.0.2
+## v tidyr   1.1.2     v stringr 1.4.0
+## v readr   1.3.1     v forcats 0.5.0</code></pre>
+<pre><code>## Warning: package &#39;stringr&#39; was built under R version 4.0.3</code></pre>
+<pre><code>## -- Conflicts -------------------------------- tidyverse_conflicts() --
+## x dplyr::filter() masks stats::filter()
+## x dplyr::lag()    masks stats::lag()</code></pre>
+<pre class="r"><code>wvs.dta &lt;- wvs.dta %&gt;% 
+  select(Q1, Q2, Q3, Q4, Q5, Q6, Q47, Q49, Q50, Q57, Q260, Q262, Q273, Q275, Q279, Q288, Q202) %&gt;%
+  rename(&quot;ptg.keluarga&quot;=&quot;Q1&quot;,
+         &quot;ptg.teman&quot;=&quot;Q2&quot;,
+         &quot;ptg.waktu&quot;=&quot;Q3&quot;,
+         &quot;ptg.politik&quot;=&quot;Q4&quot;, 
+         &quot;ptg.pekerjaan&quot;=&quot;Q5&quot;, 
+         &quot;ptg.agama&quot;=&quot;Q6&quot;, 
+         &quot;kesehatan&quot;=&quot;Q47&quot;, 
+         &quot;kepuasan.hari&quot;=&quot;Q49&quot;, 
+         &quot;kepuasan.keuangan&quot;=&quot;Q50&quot;, 
+         &quot;tkt.percaya&quot;=&quot;Q57&quot;, 
+         &quot;gender&quot;=&quot;Q260&quot;,
+         &quot;usia&quot;=&quot;Q262&quot;, 
+         &quot;sts.nikah&quot;=&quot;Q273&quot;,
+         &quot;pendidikan&quot;=&quot;Q275&quot;,
+         &quot;statuskerja&quot;=&quot;Q279&quot;,
+         &quot;pendapatan&quot;=&quot;Q288&quot;, 
+         &quot;TV&quot;=&quot;Q202&quot;)
+
+## 5. Inspeksi Data (2) - Setelah pemilihan variabel
+
+dim(wvs.dta)</code></pre>
+<pre><code>## [1] 3200   17</code></pre>
+<pre class="r"><code>view(wvs.dta)
+names(wvs.dta)</code></pre>
+<pre><code>##  [1] &quot;ptg.keluarga&quot;      &quot;ptg.teman&quot;         &quot;ptg.waktu&quot;        
+##  [4] &quot;ptg.politik&quot;       &quot;ptg.pekerjaan&quot;     &quot;ptg.agama&quot;        
+##  [7] &quot;kesehatan&quot;         &quot;kepuasan.hari&quot;     &quot;kepuasan.keuangan&quot;
+## [10] &quot;tkt.percaya&quot;       &quot;gender&quot;            &quot;usia&quot;             
+## [13] &quot;sts.nikah&quot;         &quot;pendidikan&quot;        &quot;statuskerja&quot;      
+## [16] &quot;pendapatan&quot;        &quot;TV&quot;</code></pre>
+<pre class="r"><code>head(wvs.dta, n = 2)</code></pre>
+<pre><code>## # A tibble: 2 x 17
+##   ptg.keluarga ptg.teman ptg.waktu ptg.politik ptg.pekerjaan ptg.agama kesehatan
+##      &lt;dbl+lbl&gt; &lt;dbl+lbl&gt; &lt;dbl+lbl&gt;   &lt;dbl+lbl&gt;     &lt;dbl+lbl&gt; &lt;dbl+lbl&gt; &lt;dbl+lbl&gt;
+## 1 1 [Very imp~ 2 [Rathe~ 2 [Rathe~ 1 [Very im~ 1 [Very impo~ 1 [Very ~  2 [Good]
+## 2 1 [Very imp~ 2 [Rathe~ 2 [Rathe~ 3 [Not ver~ 1 [Very impo~ 1 [Very ~  3 [Fair]
+## # ... with 10 more variables: kepuasan.hari &lt;dbl+lbl&gt;,
+## #   kepuasan.keuangan &lt;dbl+lbl&gt;, tkt.percaya &lt;dbl+lbl&gt;, gender &lt;dbl+lbl&gt;,
+## #   usia &lt;dbl+lbl&gt;, sts.nikah &lt;dbl+lbl&gt;, pendidikan &lt;dbl+lbl&gt;,
+## #   statuskerja &lt;dbl+lbl&gt;, pendapatan &lt;dbl+lbl&gt;, TV &lt;dbl+lbl&gt;</code></pre>
+<pre class="r"><code>tail(wvs.dta, n = 2)</code></pre>
+<pre><code>## # A tibble: 2 x 17
+##   ptg.keluarga ptg.teman ptg.waktu ptg.politik ptg.pekerjaan ptg.agama kesehatan
+##      &lt;dbl+lbl&gt; &lt;dbl+lbl&gt; &lt;dbl+lbl&gt;   &lt;dbl+lbl&gt;     &lt;dbl+lbl&gt; &lt;dbl+lbl&gt; &lt;dbl+lbl&gt;
+## 1 1 [Very imp~ 1 [Very ~ 1 [Very ~ 4 [Not at ~ 1 [Very impo~ 1 [Very ~  3 [Fair]
+## 2 1 [Very imp~ 1 [Very ~ 1 [Very ~ 2 [Rather ~ 1 [Very impo~ 1 [Very ~  2 [Good]
+## # ... with 10 more variables: kepuasan.hari &lt;dbl+lbl&gt;,
+## #   kepuasan.keuangan &lt;dbl+lbl&gt;, tkt.percaya &lt;dbl+lbl&gt;, gender &lt;dbl+lbl&gt;,
+## #   usia &lt;dbl+lbl&gt;, sts.nikah &lt;dbl+lbl&gt;, pendidikan &lt;dbl+lbl&gt;,
+## #   statuskerja &lt;dbl+lbl&gt;, pendapatan &lt;dbl+lbl&gt;, TV &lt;dbl+lbl&gt;</code></pre>
+<pre class="r"><code>str(wvs.dta)</code></pre>
+<pre><code>## tibble [3,200 x 17] (S3: tbl_df/tbl/data.frame)
+##  $ ptg.keluarga     : dbl+lbl [1:3200] 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,...
+##    ..@ label       : chr &quot;Important in life: Family&quot;
+##    ..@ format.stata: chr &quot;%9.0f&quot;
+##    ..@ labels      : Named num [1:8] 1 2 3 4 -1 -2 -4 -5
+##    .. ..- attr(*, &quot;names&quot;)= chr [1:8] &quot;Very important&quot; &quot;Rather important&quot; &quot;Not very important&quot; &quot;Not at all important&quot; ...
+##  $ ptg.teman        : dbl+lbl [1:3200] 2, 2, 1, 2, 2, 1, 2, 2, 1, 2, 1, 2, 2, 2, 2, 3, 1, 1,...
+##    ..@ label       : chr &quot;Important in life: Friends&quot;
+##    ..@ format.stata: chr &quot;%9.0f&quot;
+##    ..@ labels      : Named num [1:8] 1 2 3 4 -1 -2 -4 -5
+##    .. ..- attr(*, &quot;names&quot;)= chr [1:8] &quot;Very important&quot; &quot;Rather important&quot; &quot;Not very important&quot; &quot;Not at all important&quot; ...
+##  $ ptg.waktu        : dbl+lbl [1:3200] 2, 2, 1, 2, 2, 1, 1, 2, 1, 2, 2, 3, 3, 1, 1, 3, 3, 1,...
+##    ..@ label       : chr &quot;Important in life: Leisure time&quot;
+##    ..@ format.stata: chr &quot;%9.0f&quot;
+##    ..@ labels      : Named num [1:8] 1 2 3 4 -1 -2 -4 -5
+##    .. ..- attr(*, &quot;names&quot;)= chr [1:8] &quot;Very important&quot; &quot;Rather important&quot; &quot;Not very important&quot; &quot;Not at all important&quot; ...
+##  $ ptg.politik      : dbl+lbl [1:3200] 1, 3, 4, 4, 2, 2, 2, 4, 3, 3, 3, 4, 4, 1, 1, 3, 4, 1,...
+##    ..@ label       : chr &quot;Important in life: Politics&quot;
+##    ..@ format.stata: chr &quot;%9.0f&quot;
+##    ..@ labels      : Named num [1:8] 1 2 3 4 -1 -2 -4 -5
+##    .. ..- attr(*, &quot;names&quot;)= chr [1:8] &quot;Very important&quot; &quot;Rather important&quot; &quot;Not very important&quot; &quot;Not at all important&quot; ...
+##  $ ptg.pekerjaan    : dbl+lbl [1:3200] 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1,...
+##    ..@ label       : chr &quot;Important in life: Work&quot;
+##    ..@ format.stata: chr &quot;%9.0f&quot;
+##    ..@ labels      : Named num [1:8] 1 2 3 4 -1 -2 -4 -5
+##    .. ..- attr(*, &quot;names&quot;)= chr [1:8] &quot;Very important&quot; &quot;Rather important&quot; &quot;Not very important&quot; &quot;Not at all important&quot; ...
+##  $ ptg.agama        : dbl+lbl [1:3200] 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,...
+##    ..@ label       : chr &quot;Important in life: Religion&quot;
+##    ..@ format.stata: chr &quot;%9.0f&quot;
+##    ..@ labels      : Named num [1:8] 1 2 3 4 -1 -2 -4 -5
+##    .. ..- attr(*, &quot;names&quot;)= chr [1:8] &quot;Very important&quot; &quot;Rather important&quot; &quot;Not very important&quot; &quot;Not at all important&quot; ...
+##  $ kesehatan        : dbl+lbl [1:3200] 2, 3, 2, 1, 2, 2, 1, 4, 3, 3, 2, 2, 3, 1, 1, 2, 1, 1,...
+##    ..@ label       : chr &quot;State of health (subjective)&quot;
+##    ..@ format.stata: chr &quot;%9.0f&quot;
+##    ..@ labels      : Named num [1:9] 1 2 3 4 5 -1 -2 -4 -5
+##    .. ..- attr(*, &quot;names&quot;)= chr [1:9] &quot;Very good&quot; &quot;Good&quot; &quot;Fair&quot; &quot;Poor&quot; ...
+##  $ kepuasan.hari    : dbl+lbl [1:3200]  8,  8,  5, 10,  9, 10,  3,  5,  4,  1, 10,  9,  1, 1...
+##    ..@ label       : chr &quot;Satisfaction with your life&quot;
+##    ..@ format.stata: chr &quot;%9.0f&quot;
+##    ..@ labels      : Named num [1:14] 10 9 8 7 6 5 4 3 2 1 ...
+##    .. ..- attr(*, &quot;names&quot;)= chr [1:14] &quot;Completely satisfied&quot; &quot;9&quot; &quot;8&quot; &quot;7&quot; ...
+##  $ kepuasan.keuangan: dbl+lbl [1:3200]  3,  4,  3, 10, 10, 10,  2,  3,  3,  2,  3,  5,  1, 1...
+##    ..@ label       : chr &quot;Satisfaction with financial situation of household&quot;
+##    ..@ format.stata: chr &quot;%9.0f&quot;
+##    ..@ labels      : Named num [1:14] 10 9 8 7 6 5 4 3 2 1 ...
+##    .. ..- attr(*, &quot;names&quot;)= chr [1:14] &quot;Satisfied&quot; &quot;9&quot; &quot;8&quot; &quot;7&quot; ...
+##  $ tkt.percaya      : dbl+lbl [1:3200] 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,...
+##    ..@ label       : chr &quot;Most people can be trusted&quot;
+##    ..@ format.stata: chr &quot;%9.0f&quot;
+##    ..@ labels      : Named num [1:6] 1 2 -1 -2 -4 -5
+##    .. ..- attr(*, &quot;names&quot;)= chr [1:6] &quot;Most people can be trusted&quot; &quot;Need to be very careful&quot; &quot;Dont know&quot; &quot;No answer&quot; ...
+##  $ gender           : dbl+lbl [1:3200] 1, 2, 1, 1, 2, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 1,...
+##    ..@ label       : chr &quot;Sex&quot;
+##    ..@ format.stata: chr &quot;%9.0f&quot;
+##    ..@ labels      : Named num [1:5] 1 2 -2 -4 -5
+##    .. ..- attr(*, &quot;names&quot;)= chr [1:5] &quot;Male&quot; &quot;Female&quot; &quot;No answer&quot; &quot;Not asked&quot; ...
+##  $ usia             : dbl+lbl [1:3200] 20, 35, 21, 35, 21, 23, 43, 45, 32, 32, 34, 25, 32, 1...
+##    ..@ label       : chr &quot;Age&quot;
+##    ..@ format.stata: chr &quot;%9.0f&quot;
+##    ..@ labels      : Named num [1:4] -1 -2 -4 -5
+##    .. ..- attr(*, &quot;names&quot;)= chr [1:4] &quot;Don&#39;t know&quot; &quot;No answer&quot; &quot;Not asked&quot; &quot;Other missing; Multiple answers Mail (EVS) {other missing}&quot;
+##  $ sts.nikah        : dbl+lbl [1:3200] 6, 1, 6, 1, 1, 6, 1, 1, 1, 1, 3, 1, 1, 1, 1, 1, 1, 6,...
+##    ..@ label       : chr &quot;Marital status&quot;
+##    ..@ format.stata: chr &quot;%9.0f&quot;
+##    ..@ labels      : Named num [1:10] 1 2 3 4 5 6 -1 -2 -4 -5
+##    .. ..- attr(*, &quot;names&quot;)= chr [1:10] &quot;Married&quot; &quot;Living together as married&quot; &quot;Divorced&quot; &quot;Separated&quot; ...
+##  $ pendidikan       : dbl+lbl [1:3200] 3, 1, 3, 1, 3, 3, 3, 1, 1, 1, 1, 3, 3, 2, 3, 6, 0, 2,...
+##    ..@ label       : chr &quot;Highest educational level: Respondent [ISCED 2011]&quot;
+##    ..@ format.stata: chr &quot;%9.0f&quot;
+##    ..@ labels      : Named num [1:14] 0 1 2 3 4 5 6 7 8 9 ...
+##    .. ..- attr(*, &quot;names&quot;)= chr [1:14] &quot;Early childhood education (ISCED 0) / no education{ISCED 0}&quot; &quot;Primary education (ISCED 1){ISCED 1}&quot; &quot;Lower secondary education (ISCED 2){ISCED 2}&quot; &quot;Upper secondary education (ISCED 3){ISCED 3}&quot; ...
+##  $ statuskerja      : dbl+lbl [1:3200] 2, 3, 2, 3, 3, 1, 3, 3, 1, 2, 3, 5, 3, 5, 3, 3, 2, 3,...
+##    ..@ label       : chr &quot;Employment status&quot;
+##    ..@ format.stata: chr &quot;%9.0f&quot;
+##    ..@ labels      : Named num [1:14] 1 2 3 4 5 6 7 8 9 10 ...
+##    .. ..- attr(*, &quot;names&quot;)= chr [1:14] &quot;Full time (30 hours a week or more)&quot; &quot;Part time (less than 30 hours a week)&quot; &quot;Self employed&quot; &quot;Retired/pensioned&quot; ...
+##  $ pendapatan       : dbl+lbl [1:3200]  3,  2,  4,  1,  2,  3,  1,  3,  3,  3,  3,  1,  1,  ...
+##    ..@ label       : chr &quot;Scale of incomes&quot;
+##    ..@ format.stata: chr &quot;%9.0f&quot;
+##    ..@ labels      : Named num [1:14] 1 2 3 4 5 6 7 8 9 10 ...
+##    .. ..- attr(*, &quot;names&quot;)= chr [1:14] &quot;Lower step{1}&quot; &quot;second step{2}&quot; &quot;Third step{3}&quot; &quot;Fourth step{4}&quot; ...
+##  $ TV               : dbl+lbl [1:3200] 1, 4, 1, 2, 1, 1, 1, 3, 1, 1, 1, 4, 1, 5, 1, 1, 2, 5,...
+##    ..@ label       : chr &quot;Information source: TV news&quot;
+##    ..@ format.stata: chr &quot;%9.0f&quot;
+##    ..@ labels      : Named num [1:10] 1 2 3 4 5 -1 -2 -3 -4 -5
+##    .. ..- attr(*, &quot;names&quot;)= chr [1:10] &quot;Daily&quot; &quot;Weekly&quot; &quot;Monthly&quot; &quot;Less than monthly&quot; ...
+##  - attr(*, &quot;label&quot;)= chr &quot;WVS_Wave_7_dta_v1_4.dta&quot;</code></pre>
+<pre class="r"><code>## 6. Inspeksi Data (3) - Lebih dalam memahami variabel
+
+library(labelled)</code></pre>
+<pre><code>## Warning: package &#39;labelled&#39; was built under R version 4.0.4</code></pre>
+<pre class="r"><code>look_for(wvs.dta)</code></pre>
+<pre><code>## pos   variable     label                 col_type values                        
+## &lt;chr&gt; &lt;chr&gt;        &lt;chr&gt;                 &lt;chr&gt;    &lt;chr&gt;                         
+## 1     ptg.keluarga Important in life: F~ dbl+lbl  [1] Very important            
+## &lt;U+200B&gt;      &lt;U+200B&gt;             &lt;U+200B&gt;                      &lt;U+200B&gt;         [2] Rather important          
+## &lt;U+200B&gt;      &lt;U+200B&gt;             &lt;U+200B&gt;                      &lt;U+200B&gt;         [3] Not very important        
+## &lt;U+200B&gt;      &lt;U+200B&gt;             &lt;U+200B&gt;                      &lt;U+200B&gt;         [4] Not at all important      
+## &lt;U+200B&gt;      &lt;U+200B&gt;             &lt;U+200B&gt;                      &lt;U+200B&gt;         [-1] Dont know                
+## &lt;U+200B&gt;      &lt;U+200B&gt;             &lt;U+200B&gt;                      &lt;U+200B&gt;         [-2] No answer                
+## &lt;U+200B&gt;      &lt;U+200B&gt;             &lt;U+200B&gt;                      &lt;U+200B&gt;         [-4] Not asked                
+## &lt;U+200B&gt;      &lt;U+200B&gt;             &lt;U+200B&gt;                      &lt;U+200B&gt;         [-5] Other missing; Multiple ~
+## 2     ptg.teman    Important in life: F~ dbl+lbl  [1] Very important            
+## &lt;U+200B&gt;      &lt;U+200B&gt;             &lt;U+200B&gt;                      &lt;U+200B&gt;         [2] Rather important          
+## &lt;U+200B&gt;      &lt;U+200B&gt;             &lt;U+200B&gt;                      &lt;U+200B&gt;         [3] Not very important        
+## &lt;U+200B&gt;      &lt;U+200B&gt;             &lt;U+200B&gt;                      &lt;U+200B&gt;         [4] Not at all important      
+## &lt;U+200B&gt;      &lt;U+200B&gt;             &lt;U+200B&gt;                      &lt;U+200B&gt;         [-1] Dont know                
+## &lt;U+200B&gt;      &lt;U+200B&gt;             &lt;U+200B&gt;                      &lt;U+200B&gt;         [-2] No answer                
+## &lt;U+200B&gt;      &lt;U+200B&gt;             &lt;U+200B&gt;                      &lt;U+200B&gt;         [-4] Not asked                
+## &lt;U+200B&gt;      &lt;U+200B&gt;             &lt;U+200B&gt;                      &lt;U+200B&gt;         [-5] Other missing; Multiple ~
+## 3     ptg.waktu    Important in life: L~ dbl+lbl  [1] Very important            
+## &lt;U+200B&gt;      &lt;U+200B&gt;             &lt;U+200B&gt;                      &lt;U+200B&gt;         [2] Rather important          
+## &lt;U+200B&gt;      &lt;U+200B&gt;             &lt;U+200B&gt;                      &lt;U+200B&gt;         [3] Not very important        
+## &lt;U+200B&gt;      &lt;U+200B&gt;             &lt;U+200B&gt;                      &lt;U+200B&gt;         [4] Not at all important      
+## &lt;U+200B&gt;      &lt;U+200B&gt;             &lt;U+200B&gt;                      &lt;U+200B&gt;         [-1] Dont know                
+## &lt;U+200B&gt;      &lt;U+200B&gt;             &lt;U+200B&gt;                      &lt;U+200B&gt;         [-2] No answer                
+## &lt;U+200B&gt;      &lt;U+200B&gt;             &lt;U+200B&gt;                      &lt;U+200B&gt;         [-4] Not asked                
+## &lt;U+200B&gt;      &lt;U+200B&gt;             &lt;U+200B&gt;                      &lt;U+200B&gt;         [-5] Other missing; Multiple ~
+## 4     ptg.politik  Important in life: P~ dbl+lbl  [1] Very important            
+## &lt;U+200B&gt;      &lt;U+200B&gt;             &lt;U+200B&gt;                      &lt;U+200B&gt;         [2] Rather important          
+## &lt;U+200B&gt;      &lt;U+200B&gt;             &lt;U+200B&gt;                      &lt;U+200B&gt;         [3] Not very important        
+## &lt;U+200B&gt;      &lt;U+200B&gt;             &lt;U+200B&gt;                      &lt;U+200B&gt;         [4] Not at all important      
+## &lt;U+200B&gt;      &lt;U+200B&gt;             &lt;U+200B&gt;                      &lt;U+200B&gt;         [-1] Dont know                
+## &lt;U+200B&gt;      &lt;U+200B&gt;             &lt;U+200B&gt;                      &lt;U+200B&gt;         [-2] No answer                
+## &lt;U+200B&gt;      &lt;U+200B&gt;             &lt;U+200B&gt;                      &lt;U+200B&gt;         [-4] Not asked                
+## &lt;U+200B&gt;      &lt;U+200B&gt;             &lt;U+200B&gt;                      &lt;U+200B&gt;         [-5] Other missing; Multiple ~
+## 5     ptg.pekerja~ Important in life: W~ dbl+lbl  [1] Very important            
+## &lt;U+200B&gt;      &lt;U+200B&gt;             &lt;U+200B&gt;                      &lt;U+200B&gt;         [2] Rather important          
+## &lt;U+200B&gt;      &lt;U+200B&gt;             &lt;U+200B&gt;                      &lt;U+200B&gt;         [3] Not very important        
+## &lt;U+200B&gt;      &lt;U+200B&gt;             &lt;U+200B&gt;                      &lt;U+200B&gt;         [4] Not at all important      
+## &lt;U+200B&gt;      &lt;U+200B&gt;             &lt;U+200B&gt;                      &lt;U+200B&gt;         [-1] Dont know                
+## &lt;U+200B&gt;      &lt;U+200B&gt;             &lt;U+200B&gt;                      &lt;U+200B&gt;         [-2] No answer                
+## &lt;U+200B&gt;      &lt;U+200B&gt;             &lt;U+200B&gt;                      &lt;U+200B&gt;         [-4] Not asked                
+## &lt;U+200B&gt;      &lt;U+200B&gt;             &lt;U+200B&gt;                      &lt;U+200B&gt;         [-5] Other missing; Multiple ~
+## 6     ptg.agama    Important in life: R~ dbl+lbl  [1] Very important            
+## &lt;U+200B&gt;      &lt;U+200B&gt;             &lt;U+200B&gt;                      &lt;U+200B&gt;         [2] Rather important          
+## &lt;U+200B&gt;      &lt;U+200B&gt;             &lt;U+200B&gt;                      &lt;U+200B&gt;         [3] Not very important        
+## &lt;U+200B&gt;      &lt;U+200B&gt;             &lt;U+200B&gt;                      &lt;U+200B&gt;         [4] Not at all important      
+## &lt;U+200B&gt;      &lt;U+200B&gt;             &lt;U+200B&gt;                      &lt;U+200B&gt;         [-1] Dont know                
+## &lt;U+200B&gt;      &lt;U+200B&gt;             &lt;U+200B&gt;                      &lt;U+200B&gt;         [-2] No answer                
+## &lt;U+200B&gt;      &lt;U+200B&gt;             &lt;U+200B&gt;                      &lt;U+200B&gt;         [-4] Not asked                
+## &lt;U+200B&gt;      &lt;U+200B&gt;             &lt;U+200B&gt;                      &lt;U+200B&gt;         [-5] Other missing; Multiple ~
+## 7     kesehatan    State of health (sub~ dbl+lbl  [1] Very good                 
+## &lt;U+200B&gt;      &lt;U+200B&gt;             &lt;U+200B&gt;                      &lt;U+200B&gt;         [2] Good                      
+## &lt;U+200B&gt;      &lt;U+200B&gt;             &lt;U+200B&gt;                      &lt;U+200B&gt;         [3] Fair                      
+## &lt;U+200B&gt;      &lt;U+200B&gt;             &lt;U+200B&gt;                      &lt;U+200B&gt;         [4] Poor                      
+## &lt;U+200B&gt;      &lt;U+200B&gt;             &lt;U+200B&gt;                      &lt;U+200B&gt;         [5] Very poor                 
+## &lt;U+200B&gt;      &lt;U+200B&gt;             &lt;U+200B&gt;                      &lt;U+200B&gt;         [-1] Dont know                
+## &lt;U+200B&gt;      &lt;U+200B&gt;             &lt;U+200B&gt;                      &lt;U+200B&gt;         [-2] No answer                
+## &lt;U+200B&gt;      &lt;U+200B&gt;             &lt;U+200B&gt;                      &lt;U+200B&gt;         [-4] Not asked in survey      
+## &lt;U+200B&gt;      &lt;U+200B&gt;             &lt;U+200B&gt;                      &lt;U+200B&gt;         [-5] Other missing; Multiple ~
+## 8     kepuasan.ha~ Satisfaction with yo~ dbl+lbl  [10] Completely satisfied     
+## &lt;U+200B&gt;      &lt;U+200B&gt;             &lt;U+200B&gt;                      &lt;U+200B&gt;         [9] 9                         
+## &lt;U+200B&gt;      &lt;U+200B&gt;             &lt;U+200B&gt;                      &lt;U+200B&gt;         [8] 8                         
+## &lt;U+200B&gt;      &lt;U+200B&gt;             &lt;U+200B&gt;                      &lt;U+200B&gt;         [7] 7                         
+## &lt;U+200B&gt;      &lt;U+200B&gt;             &lt;U+200B&gt;                      &lt;U+200B&gt;         [6] 6                         
+## &lt;U+200B&gt;      &lt;U+200B&gt;             &lt;U+200B&gt;                      &lt;U+200B&gt;         [5] 5                         
+## &lt;U+200B&gt;      &lt;U+200B&gt;             &lt;U+200B&gt;                      &lt;U+200B&gt;         [4] 4                         
+## &lt;U+200B&gt;      &lt;U+200B&gt;             &lt;U+200B&gt;                      &lt;U+200B&gt;         [3] 3                         
+## &lt;U+200B&gt;      &lt;U+200B&gt;             &lt;U+200B&gt;                      &lt;U+200B&gt;         [2] 2                         
+## &lt;U+200B&gt;      &lt;U+200B&gt;             &lt;U+200B&gt;                      &lt;U+200B&gt;         [1] Completely dissatisfied   
+## &lt;U+200B&gt;      &lt;U+200B&gt;             &lt;U+200B&gt;                      &lt;U+200B&gt;         [-1] Dont know                
+## &lt;U+200B&gt;      &lt;U+200B&gt;             &lt;U+200B&gt;                      &lt;U+200B&gt;         [-2] No answer                
+## &lt;U+200B&gt;      &lt;U+200B&gt;             &lt;U+200B&gt;                      &lt;U+200B&gt;         [-4] Not asked                
+## &lt;U+200B&gt;      &lt;U+200B&gt;             &lt;U+200B&gt;                      &lt;U+200B&gt;         [-5] Other missing; Multiple ~
+## 9     kepuasan.ke~ Satisfaction with fi~ dbl+lbl  [10] Satisfied                
+## &lt;U+200B&gt;      &lt;U+200B&gt;             &lt;U+200B&gt;                      &lt;U+200B&gt;         [9] 9                         
+## &lt;U+200B&gt;      &lt;U+200B&gt;             &lt;U+200B&gt;                      &lt;U+200B&gt;         [8] 8                         
+## &lt;U+200B&gt;      &lt;U+200B&gt;             &lt;U+200B&gt;                      &lt;U+200B&gt;         [7] 7                         
+## &lt;U+200B&gt;      &lt;U+200B&gt;             &lt;U+200B&gt;                      &lt;U+200B&gt;         [6] 6                         
+## &lt;U+200B&gt;      &lt;U+200B&gt;             &lt;U+200B&gt;                      &lt;U+200B&gt;         [5] 5                         
+## &lt;U+200B&gt;      &lt;U+200B&gt;             &lt;U+200B&gt;                      &lt;U+200B&gt;         [4] 4                         
+## &lt;U+200B&gt;      &lt;U+200B&gt;             &lt;U+200B&gt;                      &lt;U+200B&gt;         [3] 3                         
+## &lt;U+200B&gt;      &lt;U+200B&gt;             &lt;U+200B&gt;                      &lt;U+200B&gt;         [2] 2                         
+## &lt;U+200B&gt;      &lt;U+200B&gt;             &lt;U+200B&gt;                      &lt;U+200B&gt;         [1] Dissatisfied              
+## &lt;U+200B&gt;      &lt;U+200B&gt;             &lt;U+200B&gt;                      &lt;U+200B&gt;         [-1] Dont know                
+## &lt;U+200B&gt;      &lt;U+200B&gt;             &lt;U+200B&gt;                      &lt;U+200B&gt;         [-2] No answer                
+## &lt;U+200B&gt;      &lt;U+200B&gt;             &lt;U+200B&gt;                      &lt;U+200B&gt;         [-4] Not asked                
+## &lt;U+200B&gt;      &lt;U+200B&gt;             &lt;U+200B&gt;                      &lt;U+200B&gt;         [-5] Missing; Unknown         
+## 10    tkt.percaya  Most people can be t~ dbl+lbl  [1] Most people can be trusted
+## &lt;U+200B&gt;      &lt;U+200B&gt;             &lt;U+200B&gt;                      &lt;U+200B&gt;         [2] Need to be very careful   
+## &lt;U+200B&gt;      &lt;U+200B&gt;             &lt;U+200B&gt;                      &lt;U+200B&gt;         [-1] Dont know                
+## &lt;U+200B&gt;      &lt;U+200B&gt;             &lt;U+200B&gt;                      &lt;U+200B&gt;         [-2] No answer                
+## &lt;U+200B&gt;      &lt;U+200B&gt;             &lt;U+200B&gt;                      &lt;U+200B&gt;         [-4] Not asked                
+## &lt;U+200B&gt;      &lt;U+200B&gt;             &lt;U+200B&gt;                      &lt;U+200B&gt;         [-5] Other missing; Multiple ~
+## 11    gender       Sex                   dbl+lbl  [1] Male                      
+## &lt;U+200B&gt;      &lt;U+200B&gt;             &lt;U+200B&gt;                      &lt;U+200B&gt;         [2] Female                    
+## &lt;U+200B&gt;      &lt;U+200B&gt;             &lt;U+200B&gt;                      &lt;U+200B&gt;         [-2] No answer                
+## &lt;U+200B&gt;      &lt;U+200B&gt;             &lt;U+200B&gt;                      &lt;U+200B&gt;         [-4] Not asked                
+## &lt;U+200B&gt;      &lt;U+200B&gt;             &lt;U+200B&gt;                      &lt;U+200B&gt;         [-5] Other missing; Multiple ~
+## 12    usia         Age                   dbl+lbl  [-1] Don&#39;t know               
+## &lt;U+200B&gt;      &lt;U+200B&gt;             &lt;U+200B&gt;                      &lt;U+200B&gt;         [-2] No answer                
+## &lt;U+200B&gt;      &lt;U+200B&gt;             &lt;U+200B&gt;                      &lt;U+200B&gt;         [-4] Not asked                
+## &lt;U+200B&gt;      &lt;U+200B&gt;             &lt;U+200B&gt;                      &lt;U+200B&gt;         [-5] Other missing; Multiple ~
+## 13    sts.nikah    Marital status        dbl+lbl  [1] Married                   
+## &lt;U+200B&gt;      &lt;U+200B&gt;             &lt;U+200B&gt;                      &lt;U+200B&gt;         [2] Living together as married
+## &lt;U+200B&gt;      &lt;U+200B&gt;             &lt;U+200B&gt;                      &lt;U+200B&gt;         [3] Divorced                  
+## &lt;U+200B&gt;      &lt;U+200B&gt;             &lt;U+200B&gt;                      &lt;U+200B&gt;         [4] Separated                 
+## &lt;U+200B&gt;      &lt;U+200B&gt;             &lt;U+200B&gt;                      &lt;U+200B&gt;         [5] Widowed                   
+## &lt;U+200B&gt;      &lt;U+200B&gt;             &lt;U+200B&gt;                      &lt;U+200B&gt;         [6] Single                    
+## &lt;U+200B&gt;      &lt;U+200B&gt;             &lt;U+200B&gt;                      &lt;U+200B&gt;         [-1] Dont know                
+## &lt;U+200B&gt;      &lt;U+200B&gt;             &lt;U+200B&gt;                      &lt;U+200B&gt;         [-2] No answer                
+## &lt;U+200B&gt;      &lt;U+200B&gt;             &lt;U+200B&gt;                      &lt;U+200B&gt;         [-4] Not asked                
+## &lt;U+200B&gt;      &lt;U+200B&gt;             &lt;U+200B&gt;                      &lt;U+200B&gt;         [-5] Other missing; Multiple ~
+## 14    pendidikan   Highest educational ~ dbl+lbl  [0] Early childhood education~
+## &lt;U+200B&gt;      &lt;U+200B&gt;             &lt;U+200B&gt;                      &lt;U+200B&gt;         [1] Primary education (ISCED ~
+## &lt;U+200B&gt;      &lt;U+200B&gt;             &lt;U+200B&gt;                      &lt;U+200B&gt;         [2] Lower secondary education~
+## &lt;U+200B&gt;      &lt;U+200B&gt;             &lt;U+200B&gt;                      &lt;U+200B&gt;         [3] Upper secondary education~
+## &lt;U+200B&gt;      &lt;U+200B&gt;             &lt;U+200B&gt;                      &lt;U+200B&gt;         [4] Post-secondary non-tertia~
+## &lt;U+200B&gt;      &lt;U+200B&gt;             &lt;U+200B&gt;                      &lt;U+200B&gt;         [5] Short-cycle tertiary educ~
+## &lt;U+200B&gt;      &lt;U+200B&gt;             &lt;U+200B&gt;                      &lt;U+200B&gt;         [6] Bachelor or equivalent (I~
+## &lt;U+200B&gt;      &lt;U+200B&gt;             &lt;U+200B&gt;                      &lt;U+200B&gt;         [7] Master or equivalent (ISC~
+## &lt;U+200B&gt;      &lt;U+200B&gt;             &lt;U+200B&gt;                      &lt;U+200B&gt;         [8] Doctoral or equivalent (I~
+## &lt;U+200B&gt;      &lt;U+200B&gt;             &lt;U+200B&gt;                      &lt;U+200B&gt;         [9] Other                     
+## &lt;U+200B&gt;      &lt;U+200B&gt;             &lt;U+200B&gt;                      &lt;U+200B&gt;         [-1] Dont know{DK}            
+## &lt;U+200B&gt;      &lt;U+200B&gt;             &lt;U+200B&gt;                      &lt;U+200B&gt;         [-2] No answer{NA}            
+## &lt;U+200B&gt;      &lt;U+200B&gt;             &lt;U+200B&gt;                      &lt;U+200B&gt;         [-4] Not asked                
+## &lt;U+200B&gt;      &lt;U+200B&gt;             &lt;U+200B&gt;                      &lt;U+200B&gt;         [-5] Other missing; Multiple ~
+## 15    statuskerja  Employment status     dbl+lbl  [1] Full time (30 hours a wee~
+## &lt;U+200B&gt;      &lt;U+200B&gt;             &lt;U+200B&gt;                      &lt;U+200B&gt;         [2] Part time (less than 30 h~
+## &lt;U+200B&gt;      &lt;U+200B&gt;             &lt;U+200B&gt;                      &lt;U+200B&gt;         [3] Self employed             
+## &lt;U+200B&gt;      &lt;U+200B&gt;             &lt;U+200B&gt;                      &lt;U+200B&gt;         [4] Retired/pensioned         
+## &lt;U+200B&gt;      &lt;U+200B&gt;             &lt;U+200B&gt;                      &lt;U+200B&gt;         [5] Homemaker not otherwise e~
+## &lt;U+200B&gt;      &lt;U+200B&gt;             &lt;U+200B&gt;                      &lt;U+200B&gt;         [6] Student                   
+## &lt;U+200B&gt;      &lt;U+200B&gt;             &lt;U+200B&gt;                      &lt;U+200B&gt;         [7] Unemployed                
+## &lt;U+200B&gt;      &lt;U+200B&gt;             &lt;U+200B&gt;                      &lt;U+200B&gt;         [8] Other                     
+## &lt;U+200B&gt;      &lt;U+200B&gt;             &lt;U+200B&gt;                      &lt;U+200B&gt;         [9] Disabled (EVS)            
+## &lt;U+200B&gt;      &lt;U+200B&gt;             &lt;U+200B&gt;                      &lt;U+200B&gt;         [10] Military Service (EVS)   
+## &lt;U+200B&gt;      &lt;U+200B&gt;             &lt;U+200B&gt;                      &lt;U+200B&gt;         [-1] Dont know                
+## &lt;U+200B&gt;      &lt;U+200B&gt;             &lt;U+200B&gt;                      &lt;U+200B&gt;         [-2] No answer                
+## &lt;U+200B&gt;      &lt;U+200B&gt;             &lt;U+200B&gt;                      &lt;U+200B&gt;         [-4] Not asked                
+## &lt;U+200B&gt;      &lt;U+200B&gt;             &lt;U+200B&gt;                      &lt;U+200B&gt;         [-5] Other missing; Multiple ~
+## 16    pendapatan   Scale of incomes      dbl+lbl  [1] Lower step{1}             
+## &lt;U+200B&gt;      &lt;U+200B&gt;             &lt;U+200B&gt;                      &lt;U+200B&gt;         [2] second step{2}            
+## &lt;U+200B&gt;      &lt;U+200B&gt;             &lt;U+200B&gt;                      &lt;U+200B&gt;         [3] Third step{3}             
+## &lt;U+200B&gt;      &lt;U+200B&gt;             &lt;U+200B&gt;                      &lt;U+200B&gt;         [4] Fourth step{4}            
+## &lt;U+200B&gt;      &lt;U+200B&gt;             &lt;U+200B&gt;                      &lt;U+200B&gt;         [5] Fifth step{5}             
+## &lt;U+200B&gt;      &lt;U+200B&gt;             &lt;U+200B&gt;                      &lt;U+200B&gt;         [6] Sixth step{6}             
+## &lt;U+200B&gt;      &lt;U+200B&gt;             &lt;U+200B&gt;                      &lt;U+200B&gt;         [7] Seventh step{7}           
+## &lt;U+200B&gt;      &lt;U+200B&gt;             &lt;U+200B&gt;                      &lt;U+200B&gt;         [8] Eight  step{8}            
+## &lt;U+200B&gt;      &lt;U+200B&gt;             &lt;U+200B&gt;                      &lt;U+200B&gt;         [9] Nineth step{9}            
+## &lt;U+200B&gt;      &lt;U+200B&gt;             &lt;U+200B&gt;                      &lt;U+200B&gt;         [10] Tenth step{10}           
+## &lt;U+200B&gt;      &lt;U+200B&gt;             &lt;U+200B&gt;                      &lt;U+200B&gt;         [-1] Dont know{DK}            
+## &lt;U+200B&gt;      &lt;U+200B&gt;             &lt;U+200B&gt;                      &lt;U+200B&gt;         [-2] No answer{NA}            
+## &lt;U+200B&gt;      &lt;U+200B&gt;             &lt;U+200B&gt;                      &lt;U+200B&gt;         [-4] Not asked                
+## &lt;U+200B&gt;      &lt;U+200B&gt;             &lt;U+200B&gt;                      &lt;U+200B&gt;         [-5] Other missing; Multiple ~
+## 17    TV           Information source: ~ dbl+lbl  [1] Daily                     
+## &lt;U+200B&gt;      &lt;U+200B&gt;             &lt;U+200B&gt;                      &lt;U+200B&gt;         [2] Weekly                    
+## &lt;U+200B&gt;      &lt;U+200B&gt;             &lt;U+200B&gt;                      &lt;U+200B&gt;         [3] Monthly                   
+## &lt;U+200B&gt;      &lt;U+200B&gt;             &lt;U+200B&gt;                      &lt;U+200B&gt;         [4] Less than monthly         
+## &lt;U+200B&gt;      &lt;U+200B&gt;             &lt;U+200B&gt;                      &lt;U+200B&gt;         [5] Never                     
+## &lt;U+200B&gt;      &lt;U+200B&gt;             &lt;U+200B&gt;                      &lt;U+200B&gt;         [-1] Dont know                
+## &lt;U+200B&gt;      &lt;U+200B&gt;             &lt;U+200B&gt;                      &lt;U+200B&gt;         [-2] No answer                
+## &lt;U+200B&gt;      &lt;U+200B&gt;             &lt;U+200B&gt;                      &lt;U+200B&gt;         [-3] Not applicable           
+## &lt;U+200B&gt;      &lt;U+200B&gt;             &lt;U+200B&gt;                      &lt;U+200B&gt;         [-4] Not asked                
+## &lt;U+200B&gt;      &lt;U+200B&gt;             &lt;U+200B&gt;                      &lt;U+200B&gt;         [-5] Missing; Not available</code></pre>
+<pre class="r"><code>look_for(wvs.dta, &quot;ptg.keluarga&quot;)</code></pre>
+<pre><code>## pos   variable    label            col_type values                              
+## &lt;chr&gt; &lt;chr&gt;       &lt;chr&gt;            &lt;chr&gt;    &lt;chr&gt;                               
+## 1     ptg.keluar~ Important in li~ dbl+lbl  [1] Very important                  
+## &lt;U+200B&gt;      &lt;U+200B&gt;            &lt;U+200B&gt;                 &lt;U+200B&gt;         [2] Rather important                
+## &lt;U+200B&gt;      &lt;U+200B&gt;            &lt;U+200B&gt;                 &lt;U+200B&gt;         [3] Not very important              
+## &lt;U+200B&gt;      &lt;U+200B&gt;            &lt;U+200B&gt;                 &lt;U+200B&gt;         [4] Not at all important            
+## &lt;U+200B&gt;      &lt;U+200B&gt;            &lt;U+200B&gt;                 &lt;U+200B&gt;         [-1] Dont know                      
+## &lt;U+200B&gt;      &lt;U+200B&gt;            &lt;U+200B&gt;                 &lt;U+200B&gt;         [-2] No answer                      
+## &lt;U+200B&gt;      &lt;U+200B&gt;            &lt;U+200B&gt;                 &lt;U+200B&gt;         [-4] Not asked                      
+## &lt;U+200B&gt;      &lt;U+200B&gt;            &lt;U+200B&gt;                 &lt;U+200B&gt;         [-5] Other missing; Multiple answer~</code></pre>
+<pre class="r"><code>look_for(wvs.dta, &quot;ptg.teman&quot;)</code></pre>
+<pre><code>## pos   variable  label             col_type values                               
+## &lt;chr&gt; &lt;chr&gt;     &lt;chr&gt;             &lt;chr&gt;    &lt;chr&gt;                                
+## 2     ptg.teman Important in lif~ dbl+lbl  [1] Very important                   
+## &lt;U+200B&gt;      &lt;U+200B&gt;          &lt;U+200B&gt;                  &lt;U+200B&gt;         [2] Rather important                 
+## &lt;U+200B&gt;      &lt;U+200B&gt;          &lt;U+200B&gt;                  &lt;U+200B&gt;         [3] Not very important               
+## &lt;U+200B&gt;      &lt;U+200B&gt;          &lt;U+200B&gt;                  &lt;U+200B&gt;         [4] Not at all important             
+## &lt;U+200B&gt;      &lt;U+200B&gt;          &lt;U+200B&gt;                  &lt;U+200B&gt;         [-1] Dont know                       
+## &lt;U+200B&gt;      &lt;U+200B&gt;          &lt;U+200B&gt;                  &lt;U+200B&gt;         [-2] No answer                       
+## &lt;U+200B&gt;      &lt;U+200B&gt;          &lt;U+200B&gt;                  &lt;U+200B&gt;         [-4] Not asked                       
+## &lt;U+200B&gt;      &lt;U+200B&gt;          &lt;U+200B&gt;                  &lt;U+200B&gt;         [-5] Other missing; Multiple answers~</code></pre>
+<pre class="r"><code>look_for(wvs.dta, &quot;ptg.waktu&quot;)</code></pre>
+<pre><code>## pos   variable  label               col_type values                             
+## &lt;chr&gt; &lt;chr&gt;     &lt;chr&gt;               &lt;chr&gt;    &lt;chr&gt;                              
+## 3     ptg.waktu Important in life:~ dbl+lbl  [1] Very important                 
+## &lt;U+200B&gt;      &lt;U+200B&gt;          &lt;U+200B&gt;                    &lt;U+200B&gt;         [2] Rather important               
+## &lt;U+200B&gt;      &lt;U+200B&gt;          &lt;U+200B&gt;                    &lt;U+200B&gt;         [3] Not very important             
+## &lt;U+200B&gt;      &lt;U+200B&gt;          &lt;U+200B&gt;                    &lt;U+200B&gt;         [4] Not at all important           
+## &lt;U+200B&gt;      &lt;U+200B&gt;          &lt;U+200B&gt;                    &lt;U+200B&gt;         [-1] Dont know                     
+## &lt;U+200B&gt;      &lt;U+200B&gt;          &lt;U+200B&gt;                    &lt;U+200B&gt;         [-2] No answer                     
+## &lt;U+200B&gt;      &lt;U+200B&gt;          &lt;U+200B&gt;                    &lt;U+200B&gt;         [-4] Not asked                     
+## &lt;U+200B&gt;      &lt;U+200B&gt;          &lt;U+200B&gt;                    &lt;U+200B&gt;         [-5] Other missing; Multiple answe~</code></pre>
+<pre class="r"><code>look_for(wvs.dta, &quot;ptg.politik&quot;)</code></pre>
+<pre><code>## pos   variable   label             col_type values                              
+## &lt;chr&gt; &lt;chr&gt;      &lt;chr&gt;             &lt;chr&gt;    &lt;chr&gt;                               
+## 4     ptg.polit~ Important in lif~ dbl+lbl  [1] Very important                  
+## &lt;U+200B&gt;      &lt;U+200B&gt;           &lt;U+200B&gt;                  &lt;U+200B&gt;         [2] Rather important                
+## &lt;U+200B&gt;      &lt;U+200B&gt;           &lt;U+200B&gt;                  &lt;U+200B&gt;         [3] Not very important              
+## &lt;U+200B&gt;      &lt;U+200B&gt;           &lt;U+200B&gt;                  &lt;U+200B&gt;         [4] Not at all important            
+## &lt;U+200B&gt;      &lt;U+200B&gt;           &lt;U+200B&gt;                  &lt;U+200B&gt;         [-1] Dont know                      
+## &lt;U+200B&gt;      &lt;U+200B&gt;           &lt;U+200B&gt;                  &lt;U+200B&gt;         [-2] No answer                      
+## &lt;U+200B&gt;      &lt;U+200B&gt;           &lt;U+200B&gt;                  &lt;U+200B&gt;         [-4] Not asked                      
+## &lt;U+200B&gt;      &lt;U+200B&gt;           &lt;U+200B&gt;                  &lt;U+200B&gt;         [-5] Other missing; Multiple answer~</code></pre>
+<pre class="r"><code>look_for(wvs.dta, &quot;ptg.pekerjaan&quot;)</code></pre>
+<pre><code>## pos   variable    label           col_type values                               
+## &lt;chr&gt; &lt;chr&gt;       &lt;chr&gt;           &lt;chr&gt;    &lt;chr&gt;                                
+## 5     ptg.pekerj~ Important in l~ dbl+lbl  [1] Very important                   
+## &lt;U+200B&gt;      &lt;U+200B&gt;            &lt;U+200B&gt;                &lt;U+200B&gt;         [2] Rather important                 
+## &lt;U+200B&gt;      &lt;U+200B&gt;            &lt;U+200B&gt;                &lt;U+200B&gt;         [3] Not very important               
+## &lt;U+200B&gt;      &lt;U+200B&gt;            &lt;U+200B&gt;                &lt;U+200B&gt;         [4] Not at all important             
+## &lt;U+200B&gt;      &lt;U+200B&gt;            &lt;U+200B&gt;                &lt;U+200B&gt;         [-1] Dont know                       
+## &lt;U+200B&gt;      &lt;U+200B&gt;            &lt;U+200B&gt;                &lt;U+200B&gt;         [-2] No answer                       
+## &lt;U+200B&gt;      &lt;U+200B&gt;            &lt;U+200B&gt;                &lt;U+200B&gt;         [-4] Not asked                       
+## &lt;U+200B&gt;      &lt;U+200B&gt;            &lt;U+200B&gt;                &lt;U+200B&gt;         [-5] Other missing; Multiple answers~</code></pre>
+<pre class="r"><code>look_for(wvs.dta, &quot;ptg.agama&quot;)</code></pre>
+<pre><code>## pos   variable  label             col_type values                               
+## &lt;chr&gt; &lt;chr&gt;     &lt;chr&gt;             &lt;chr&gt;    &lt;chr&gt;                                
+## 6     ptg.agama Important in lif~ dbl+lbl  [1] Very important                   
+## &lt;U+200B&gt;      &lt;U+200B&gt;          &lt;U+200B&gt;                  &lt;U+200B&gt;         [2] Rather important                 
+## &lt;U+200B&gt;      &lt;U+200B&gt;          &lt;U+200B&gt;                  &lt;U+200B&gt;         [3] Not very important               
+## &lt;U+200B&gt;      &lt;U+200B&gt;          &lt;U+200B&gt;                  &lt;U+200B&gt;         [4] Not at all important             
+## &lt;U+200B&gt;      &lt;U+200B&gt;          &lt;U+200B&gt;                  &lt;U+200B&gt;         [-1] Dont know                       
+## &lt;U+200B&gt;      &lt;U+200B&gt;          &lt;U+200B&gt;                  &lt;U+200B&gt;         [-2] No answer                       
+## &lt;U+200B&gt;      &lt;U+200B&gt;          &lt;U+200B&gt;                  &lt;U+200B&gt;         [-4] Not asked                       
+## &lt;U+200B&gt;      &lt;U+200B&gt;          &lt;U+200B&gt;                  &lt;U+200B&gt;         [-5] Other missing; Multiple answers~</code></pre>
+<pre class="r"><code>look_for(wvs.dta, &quot;kesehatan&quot;)</code></pre>
+<pre><code>## pos   variable  label              col_type values                              
+## &lt;chr&gt; &lt;chr&gt;     &lt;chr&gt;              &lt;chr&gt;    &lt;chr&gt;                               
+## 7     kesehatan State of health (~ dbl+lbl  [1] Very good                       
+## &lt;U+200B&gt;      &lt;U+200B&gt;          &lt;U+200B&gt;                   &lt;U+200B&gt;         [2] Good                            
+## &lt;U+200B&gt;      &lt;U+200B&gt;          &lt;U+200B&gt;                   &lt;U+200B&gt;         [3] Fair                            
+## &lt;U+200B&gt;      &lt;U+200B&gt;          &lt;U+200B&gt;                   &lt;U+200B&gt;         [4] Poor                            
+## &lt;U+200B&gt;      &lt;U+200B&gt;          &lt;U+200B&gt;                   &lt;U+200B&gt;         [5] Very poor                       
+## &lt;U+200B&gt;      &lt;U+200B&gt;          &lt;U+200B&gt;                   &lt;U+200B&gt;         [-1] Dont know                      
+## &lt;U+200B&gt;      &lt;U+200B&gt;          &lt;U+200B&gt;                   &lt;U+200B&gt;         [-2] No answer                      
+## &lt;U+200B&gt;      &lt;U+200B&gt;          &lt;U+200B&gt;                   &lt;U+200B&gt;         [-4] Not asked in survey            
+## &lt;U+200B&gt;      &lt;U+200B&gt;          &lt;U+200B&gt;                   &lt;U+200B&gt;         [-5] Other missing; Multiple answer~</code></pre>
+<pre class="r"><code>look_for(wvs.dta, &quot;kepuasan.hari&quot;)</code></pre>
+<pre><code>## pos   variable    label             col_type values                             
+## &lt;chr&gt; &lt;chr&gt;       &lt;chr&gt;             &lt;chr&gt;    &lt;chr&gt;                              
+## 8     kepuasan.h~ Satisfaction wit~ dbl+lbl  [10] Completely satisfied          
+## &lt;U+200B&gt;      &lt;U+200B&gt;            &lt;U+200B&gt;                  &lt;U+200B&gt;         [9] 9                              
+## &lt;U+200B&gt;      &lt;U+200B&gt;            &lt;U+200B&gt;                  &lt;U+200B&gt;         [8] 8                              
+## &lt;U+200B&gt;      &lt;U+200B&gt;            &lt;U+200B&gt;                  &lt;U+200B&gt;         [7] 7                              
+## &lt;U+200B&gt;      &lt;U+200B&gt;            &lt;U+200B&gt;                  &lt;U+200B&gt;         [6] 6                              
+## &lt;U+200B&gt;      &lt;U+200B&gt;            &lt;U+200B&gt;                  &lt;U+200B&gt;         [5] 5                              
+## &lt;U+200B&gt;      &lt;U+200B&gt;            &lt;U+200B&gt;                  &lt;U+200B&gt;         [4] 4                              
+## &lt;U+200B&gt;      &lt;U+200B&gt;            &lt;U+200B&gt;                  &lt;U+200B&gt;         [3] 3                              
+## &lt;U+200B&gt;      &lt;U+200B&gt;            &lt;U+200B&gt;                  &lt;U+200B&gt;         [2] 2                              
+## &lt;U+200B&gt;      &lt;U+200B&gt;            &lt;U+200B&gt;                  &lt;U+200B&gt;         [1] Completely dissatisfied        
+## &lt;U+200B&gt;      &lt;U+200B&gt;            &lt;U+200B&gt;                  &lt;U+200B&gt;         [-1] Dont know                     
+## &lt;U+200B&gt;      &lt;U+200B&gt;            &lt;U+200B&gt;                  &lt;U+200B&gt;         [-2] No answer                     
+## &lt;U+200B&gt;      &lt;U+200B&gt;            &lt;U+200B&gt;                  &lt;U+200B&gt;         [-4] Not asked                     
+## &lt;U+200B&gt;      &lt;U+200B&gt;            &lt;U+200B&gt;                  &lt;U+200B&gt;         [-5] Other missing; Multiple answe~</code></pre>
+<pre class="r"><code>look_for(wvs.dta, &quot;kepuasan.keuangan&quot;)</code></pre>
+<pre><code>## pos   variable       label                              col_type values         
+## &lt;chr&gt; &lt;chr&gt;          &lt;chr&gt;                              &lt;chr&gt;    &lt;chr&gt;          
+## 9     kepuasan.keua~ Satisfaction with financial situa~ dbl+lbl  [10] Satisfied 
+## &lt;U+200B&gt;      &lt;U+200B&gt;               &lt;U+200B&gt;                                   &lt;U+200B&gt;         [9] 9          
+## &lt;U+200B&gt;      &lt;U+200B&gt;               &lt;U+200B&gt;                                   &lt;U+200B&gt;         [8] 8          
+## &lt;U+200B&gt;      &lt;U+200B&gt;               &lt;U+200B&gt;                                   &lt;U+200B&gt;         [7] 7          
+## &lt;U+200B&gt;      &lt;U+200B&gt;               &lt;U+200B&gt;                                   &lt;U+200B&gt;         [6] 6          
+## &lt;U+200B&gt;      &lt;U+200B&gt;               &lt;U+200B&gt;                                   &lt;U+200B&gt;         [5] 5          
+## &lt;U+200B&gt;      &lt;U+200B&gt;               &lt;U+200B&gt;                                   &lt;U+200B&gt;         [4] 4          
+## &lt;U+200B&gt;      &lt;U+200B&gt;               &lt;U+200B&gt;                                   &lt;U+200B&gt;         [3] 3          
+## &lt;U+200B&gt;      &lt;U+200B&gt;               &lt;U+200B&gt;                                   &lt;U+200B&gt;         [2] 2          
+## &lt;U+200B&gt;      &lt;U+200B&gt;               &lt;U+200B&gt;                                   &lt;U+200B&gt;         [1] Dissatisfi~
+## &lt;U+200B&gt;      &lt;U+200B&gt;               &lt;U+200B&gt;                                   &lt;U+200B&gt;         [-1] Dont know 
+## &lt;U+200B&gt;      &lt;U+200B&gt;               &lt;U+200B&gt;                                   &lt;U+200B&gt;         [-2] No answer 
+## &lt;U+200B&gt;      &lt;U+200B&gt;               &lt;U+200B&gt;                                   &lt;U+200B&gt;         [-4] Not asked 
+## &lt;U+200B&gt;      &lt;U+200B&gt;               &lt;U+200B&gt;                                   &lt;U+200B&gt;         [-5] Missing; ~</code></pre>
+<pre class="r"><code>look_for(wvs.dta, &quot;tkt.percaya&quot;)</code></pre>
+<pre><code>## pos   variable   label             col_type values                              
+## &lt;chr&gt; &lt;chr&gt;      &lt;chr&gt;             &lt;chr&gt;    &lt;chr&gt;                               
+## 10    tkt.perca~ Most people can ~ dbl+lbl  [1] Most people can be trusted      
+## &lt;U+200B&gt;      &lt;U+200B&gt;           &lt;U+200B&gt;                  &lt;U+200B&gt;         [2] Need to be very careful         
+## &lt;U+200B&gt;      &lt;U+200B&gt;           &lt;U+200B&gt;                  &lt;U+200B&gt;         [-1] Dont know                      
+## &lt;U+200B&gt;      &lt;U+200B&gt;           &lt;U+200B&gt;                  &lt;U+200B&gt;         [-2] No answer                      
+## &lt;U+200B&gt;      &lt;U+200B&gt;           &lt;U+200B&gt;                  &lt;U+200B&gt;         [-4] Not asked                      
+## &lt;U+200B&gt;      &lt;U+200B&gt;           &lt;U+200B&gt;                  &lt;U+200B&gt;         [-5] Other missing; Multiple answer~</code></pre>
+<pre class="r"><code>look_for(wvs.dta, &quot;gender&quot;)</code></pre>
+<pre><code>## pos   variable label col_type values                                            
+## &lt;chr&gt; &lt;chr&gt;    &lt;chr&gt; &lt;chr&gt;    &lt;chr&gt;                                             
+## 11    gender   Sex   dbl+lbl  [1] Male                                          
+## &lt;U+200B&gt;      &lt;U+200B&gt;         &lt;U+200B&gt;      &lt;U+200B&gt;         [2] Female                                        
+## &lt;U+200B&gt;      &lt;U+200B&gt;         &lt;U+200B&gt;      &lt;U+200B&gt;         [-2] No answer                                    
+## &lt;U+200B&gt;      &lt;U+200B&gt;         &lt;U+200B&gt;      &lt;U+200B&gt;         [-4] Not asked                                    
+## &lt;U+200B&gt;      &lt;U+200B&gt;         &lt;U+200B&gt;      &lt;U+200B&gt;         [-5] Other missing; Multiple answers Mail (EVS) {~</code></pre>
+<pre class="r"><code>look_for(wvs.dta, &quot;usia&quot;)</code></pre>
+<pre><code>## pos   variable label col_type values                                            
+## &lt;chr&gt; &lt;chr&gt;    &lt;chr&gt; &lt;chr&gt;    &lt;chr&gt;                                             
+## 12    usia     Age   dbl+lbl  [-1] Don&#39;t know                                   
+## &lt;U+200B&gt;      &lt;U+200B&gt;         &lt;U+200B&gt;      &lt;U+200B&gt;         [-2] No answer                                    
+## &lt;U+200B&gt;      &lt;U+200B&gt;         &lt;U+200B&gt;      &lt;U+200B&gt;         [-4] Not asked                                    
+## &lt;U+200B&gt;      &lt;U+200B&gt;         &lt;U+200B&gt;      &lt;U+200B&gt;         [-5] Other missing; Multiple answers Mail (EVS) {~</code></pre>
+<pre class="r"><code>look_for(wvs.dta, &quot;sts.nikah&quot;)</code></pre>
+<pre><code>## pos   variable  label       col_type values                                     
+## &lt;chr&gt; &lt;chr&gt;     &lt;chr&gt;       &lt;chr&gt;    &lt;chr&gt;                                      
+## 13    sts.nikah Marital st~ dbl+lbl  [1] Married                                
+## &lt;U+200B&gt;      &lt;U+200B&gt;          &lt;U+200B&gt;            &lt;U+200B&gt;         [2] Living together as married             
+## &lt;U+200B&gt;      &lt;U+200B&gt;          &lt;U+200B&gt;            &lt;U+200B&gt;         [3] Divorced                               
+## &lt;U+200B&gt;      &lt;U+200B&gt;          &lt;U+200B&gt;            &lt;U+200B&gt;         [4] Separated                              
+## &lt;U+200B&gt;      &lt;U+200B&gt;          &lt;U+200B&gt;            &lt;U+200B&gt;         [5] Widowed                                
+## &lt;U+200B&gt;      &lt;U+200B&gt;          &lt;U+200B&gt;            &lt;U+200B&gt;         [6] Single                                 
+## &lt;U+200B&gt;      &lt;U+200B&gt;          &lt;U+200B&gt;            &lt;U+200B&gt;         [-1] Dont know                             
+## &lt;U+200B&gt;      &lt;U+200B&gt;          &lt;U+200B&gt;            &lt;U+200B&gt;         [-2] No answer                             
+## &lt;U+200B&gt;      &lt;U+200B&gt;          &lt;U+200B&gt;            &lt;U+200B&gt;         [-4] Not asked                             
+## &lt;U+200B&gt;      &lt;U+200B&gt;          &lt;U+200B&gt;            &lt;U+200B&gt;         [-5] Other missing; Multiple answers Mail ~</code></pre>
+<pre class="r"><code>look_for(wvs.dta, &quot;pendidikan&quot;)</code></pre>
+<pre><code>## pos   variable  label                   col_type values                         
+## &lt;chr&gt; &lt;chr&gt;     &lt;chr&gt;                   &lt;chr&gt;    &lt;chr&gt;                          
+## 14    pendidik~ Highest educational le~ dbl+lbl  [0] Early childhood education ~
+## &lt;U+200B&gt;      &lt;U+200B&gt;          &lt;U+200B&gt;                        &lt;U+200B&gt;         [1] Primary education (ISCED 1~
+## &lt;U+200B&gt;      &lt;U+200B&gt;          &lt;U+200B&gt;                        &lt;U+200B&gt;         [2] Lower secondary education ~
+## &lt;U+200B&gt;      &lt;U+200B&gt;          &lt;U+200B&gt;                        &lt;U+200B&gt;         [3] Upper secondary education ~
+## &lt;U+200B&gt;      &lt;U+200B&gt;          &lt;U+200B&gt;                        &lt;U+200B&gt;         [4] Post-secondary non-tertiar~
+## &lt;U+200B&gt;      &lt;U+200B&gt;          &lt;U+200B&gt;                        &lt;U+200B&gt;         [5] Short-cycle tertiary educa~
+## &lt;U+200B&gt;      &lt;U+200B&gt;          &lt;U+200B&gt;                        &lt;U+200B&gt;         [6] Bachelor or equivalent (IS~
+## &lt;U+200B&gt;      &lt;U+200B&gt;          &lt;U+200B&gt;                        &lt;U+200B&gt;         [7] Master or equivalent (ISCE~
+## &lt;U+200B&gt;      &lt;U+200B&gt;          &lt;U+200B&gt;                        &lt;U+200B&gt;         [8] Doctoral or equivalent (IS~
+## &lt;U+200B&gt;      &lt;U+200B&gt;          &lt;U+200B&gt;                        &lt;U+200B&gt;         [9] Other                      
+## &lt;U+200B&gt;      &lt;U+200B&gt;          &lt;U+200B&gt;                        &lt;U+200B&gt;         [-1] Dont know{DK}             
+## &lt;U+200B&gt;      &lt;U+200B&gt;          &lt;U+200B&gt;                        &lt;U+200B&gt;         [-2] No answer{NA}             
+## &lt;U+200B&gt;      &lt;U+200B&gt;          &lt;U+200B&gt;                        &lt;U+200B&gt;         [-4] Not asked                 
+## &lt;U+200B&gt;      &lt;U+200B&gt;          &lt;U+200B&gt;                        &lt;U+200B&gt;         [-5] Other missing; Multiple a~</code></pre>
+<pre class="r"><code>look_for(wvs.dta, &quot;pendapatan&quot;)</code></pre>
+<pre><code>## pos   variable   label       col_type values                                    
+## &lt;chr&gt; &lt;chr&gt;      &lt;chr&gt;       &lt;chr&gt;    &lt;chr&gt;                                     
+## 16    pendapatan Scale of i~ dbl+lbl  [1] Lower step{1}                         
+## &lt;U+200B&gt;      &lt;U+200B&gt;           &lt;U+200B&gt;            &lt;U+200B&gt;         [2] second step{2}                        
+## &lt;U+200B&gt;      &lt;U+200B&gt;           &lt;U+200B&gt;            &lt;U+200B&gt;         [3] Third step{3}                         
+## &lt;U+200B&gt;      &lt;U+200B&gt;           &lt;U+200B&gt;            &lt;U+200B&gt;         [4] Fourth step{4}                        
+## &lt;U+200B&gt;      &lt;U+200B&gt;           &lt;U+200B&gt;            &lt;U+200B&gt;         [5] Fifth step{5}                         
+## &lt;U+200B&gt;      &lt;U+200B&gt;           &lt;U+200B&gt;            &lt;U+200B&gt;         [6] Sixth step{6}                         
+## &lt;U+200B&gt;      &lt;U+200B&gt;           &lt;U+200B&gt;            &lt;U+200B&gt;         [7] Seventh step{7}                       
+## &lt;U+200B&gt;      &lt;U+200B&gt;           &lt;U+200B&gt;            &lt;U+200B&gt;         [8] Eight  step{8}                        
+## &lt;U+200B&gt;      &lt;U+200B&gt;           &lt;U+200B&gt;            &lt;U+200B&gt;         [9] Nineth step{9}                        
+## &lt;U+200B&gt;      &lt;U+200B&gt;           &lt;U+200B&gt;            &lt;U+200B&gt;         [10] Tenth step{10}                       
+## &lt;U+200B&gt;      &lt;U+200B&gt;           &lt;U+200B&gt;            &lt;U+200B&gt;         [-1] Dont know{DK}                        
+## &lt;U+200B&gt;      &lt;U+200B&gt;           &lt;U+200B&gt;            &lt;U+200B&gt;         [-2] No answer{NA}                        
+## &lt;U+200B&gt;      &lt;U+200B&gt;           &lt;U+200B&gt;            &lt;U+200B&gt;         [-4] Not asked                            
+## &lt;U+200B&gt;      &lt;U+200B&gt;           &lt;U+200B&gt;            &lt;U+200B&gt;         [-5] Other missing; Multiple answers Mail~</code></pre>
+<pre class="r"><code>look_for(wvs.dta, &quot;statuskerja&quot;)</code></pre>
+<pre><code>## pos   variable   label         col_type values                                  
+## &lt;chr&gt; &lt;chr&gt;      &lt;chr&gt;         &lt;chr&gt;    &lt;chr&gt;                                   
+## 15    statusker~ Employment s~ dbl+lbl  [1] Full time (30 hours a week or more) 
+## &lt;U+200B&gt;      &lt;U+200B&gt;           &lt;U+200B&gt;              &lt;U+200B&gt;         [2] Part time (less than 30 hours a wee~
+## &lt;U+200B&gt;      &lt;U+200B&gt;           &lt;U+200B&gt;              &lt;U+200B&gt;         [3] Self employed                       
+## &lt;U+200B&gt;      &lt;U+200B&gt;           &lt;U+200B&gt;              &lt;U+200B&gt;         [4] Retired/pensioned                   
+## &lt;U+200B&gt;      &lt;U+200B&gt;           &lt;U+200B&gt;              &lt;U+200B&gt;         [5] Homemaker not otherwise employed    
+## &lt;U+200B&gt;      &lt;U+200B&gt;           &lt;U+200B&gt;              &lt;U+200B&gt;         [6] Student                             
+## &lt;U+200B&gt;      &lt;U+200B&gt;           &lt;U+200B&gt;              &lt;U+200B&gt;         [7] Unemployed                          
+## &lt;U+200B&gt;      &lt;U+200B&gt;           &lt;U+200B&gt;              &lt;U+200B&gt;         [8] Other                               
+## &lt;U+200B&gt;      &lt;U+200B&gt;           &lt;U+200B&gt;              &lt;U+200B&gt;         [9] Disabled (EVS)                      
+## &lt;U+200B&gt;      &lt;U+200B&gt;           &lt;U+200B&gt;              &lt;U+200B&gt;         [10] Military Service (EVS)             
+## &lt;U+200B&gt;      &lt;U+200B&gt;           &lt;U+200B&gt;              &lt;U+200B&gt;         [-1] Dont know                          
+## &lt;U+200B&gt;      &lt;U+200B&gt;           &lt;U+200B&gt;              &lt;U+200B&gt;         [-2] No answer                          
+## &lt;U+200B&gt;      &lt;U+200B&gt;           &lt;U+200B&gt;              &lt;U+200B&gt;         [-4] Not asked                          
+## &lt;U+200B&gt;      &lt;U+200B&gt;           &lt;U+200B&gt;              &lt;U+200B&gt;         [-5] Other missing; Multiple answers Ma~</code></pre>
+<pre class="r"><code>look_for(wvs.dta, &quot;TV&quot;)</code></pre>
+<pre><code>## pos   variable label                       col_type values                     
+## &lt;chr&gt; &lt;chr&gt;    &lt;chr&gt;                       &lt;chr&gt;    &lt;chr&gt;                      
+## 17    TV       Information source: TV news dbl+lbl  [1] Daily                  
+## &lt;U+200B&gt;      &lt;U+200B&gt;         &lt;U+200B&gt;                            &lt;U+200B&gt;         [2] Weekly                 
+## &lt;U+200B&gt;      &lt;U+200B&gt;         &lt;U+200B&gt;                            &lt;U+200B&gt;         [3] Monthly                
+## &lt;U+200B&gt;      &lt;U+200B&gt;         &lt;U+200B&gt;                            &lt;U+200B&gt;         [4] Less than monthly      
+## &lt;U+200B&gt;      &lt;U+200B&gt;         &lt;U+200B&gt;                            &lt;U+200B&gt;         [5] Never                  
+## &lt;U+200B&gt;      &lt;U+200B&gt;         &lt;U+200B&gt;                            &lt;U+200B&gt;         [-1] Dont know             
+## &lt;U+200B&gt;      &lt;U+200B&gt;         &lt;U+200B&gt;                            &lt;U+200B&gt;         [-2] No answer             
+## &lt;U+200B&gt;      &lt;U+200B&gt;         &lt;U+200B&gt;                            &lt;U+200B&gt;         [-3] Not applicable        
+## &lt;U+200B&gt;      &lt;U+200B&gt;         &lt;U+200B&gt;                            &lt;U+200B&gt;         [-4] Not asked             
+## &lt;U+200B&gt;      &lt;U+200B&gt;         &lt;U+200B&gt;                            &lt;U+200B&gt;         [-5] Missing; Not available</code></pre>
+<pre class="r"><code>wvs.dta &lt;- as.data.frame(apply(wvs.dta, 2, function(x) as.numeric(x)))
+
+look_for(wvs.dta)</code></pre>
+<pre><code>## pos   variable          label col_type values        
+## &lt;chr&gt; &lt;chr&gt;             &lt;chr&gt; &lt;chr&gt;    &lt;chr&gt;         
+## 1     ptg.keluarga      —     dbl      range: 1 - 4  
+## 2     ptg.teman         —     dbl      range: -2 - 4 
+## 3     ptg.waktu         —     dbl      range: -2 - 4 
+## 4     ptg.politik       —     dbl      range: -2 - 4 
+## 5     ptg.pekerjaan     —     dbl      range: -2 - 4 
+## 6     ptg.agama         —     dbl      range: 1 - 4  
+## 7     kesehatan         —     dbl      range: 1 - 5  
+## 8     kepuasan.hari     —     dbl      range: -5 - 10
+## 9     kepuasan.keuangan —     dbl      range: -5 - 10
+## 10    tkt.percaya       —     dbl      range: -2 - 2 
+## 11    gender            —     dbl      range: 1 - 2  
+## 12    usia              —     dbl      range: 18 - 87
+## 13    sts.nikah         —     dbl      range: 1 - 6  
+## 14    pendidikan        —     dbl      range: -1 - 8 
+## 15    statuskerja       —     dbl      range: -5 - 8 
+## 16    pendapatan        —     dbl      range: -2 - 10
+## 17    TV                —     dbl      range: -5 - 5</code></pre>
+<pre class="r"><code>look_for(wvs.dta, &quot;ptg.keluarga&quot;)</code></pre>
+<pre><code>## pos   variable     label col_type values      
+## &lt;chr&gt; &lt;chr&gt;        &lt;chr&gt; &lt;chr&gt;    &lt;chr&gt;       
+## 1     ptg.keluarga —     dbl      range: 1 - 4</code></pre>
+<pre class="r"><code>look_for(wvs.dta, &quot;ptg.teman&quot;)</code></pre>
+<pre><code>## pos   variable  label col_type values       
+## &lt;chr&gt; &lt;chr&gt;     &lt;chr&gt; &lt;chr&gt;    &lt;chr&gt;        
+## 2     ptg.teman —     dbl      range: -2 - 4</code></pre>
+<pre class="r"><code>look_for(wvs.dta, &quot;ptg.waktu&quot;)</code></pre>
+<pre><code>## pos   variable  label col_type values       
+## &lt;chr&gt; &lt;chr&gt;     &lt;chr&gt; &lt;chr&gt;    &lt;chr&gt;        
+## 3     ptg.waktu —     dbl      range: -2 - 4</code></pre>
+<pre class="r"><code>look_for(wvs.dta, &quot;ptg.politik&quot;)</code></pre>
+<pre><code>## pos   variable    label col_type values       
+## &lt;chr&gt; &lt;chr&gt;       &lt;chr&gt; &lt;chr&gt;    &lt;chr&gt;        
+## 4     ptg.politik —     dbl      range: -2 - 4</code></pre>
+<pre class="r"><code>look_for(wvs.dta, &quot;ptg.pekerjaan&quot;)</code></pre>
+<pre><code>## pos   variable      label col_type values       
+## &lt;chr&gt; &lt;chr&gt;         &lt;chr&gt; &lt;chr&gt;    &lt;chr&gt;        
+## 5     ptg.pekerjaan —     dbl      range: -2 - 4</code></pre>
+<pre class="r"><code>look_for(wvs.dta, &quot;ptg.agama&quot;)</code></pre>
+<pre><code>## pos   variable  label col_type values      
+## &lt;chr&gt; &lt;chr&gt;     &lt;chr&gt; &lt;chr&gt;    &lt;chr&gt;       
+## 6     ptg.agama —     dbl      range: 1 - 4</code></pre>
+<pre class="r"><code>look_for(wvs.dta, &quot;kesehatan&quot;)</code></pre>
+<pre><code>## pos   variable  label col_type values      
+## &lt;chr&gt; &lt;chr&gt;     &lt;chr&gt; &lt;chr&gt;    &lt;chr&gt;       
+## 7     kesehatan —     dbl      range: 1 - 5</code></pre>
+<pre class="r"><code>look_for(wvs.dta, &quot;kepuasan.hari&quot;)</code></pre>
+<pre><code>## pos   variable      label col_type values        
+## &lt;chr&gt; &lt;chr&gt;         &lt;chr&gt; &lt;chr&gt;    &lt;chr&gt;         
+## 8     kepuasan.hari —     dbl      range: -5 - 10</code></pre>
+<pre class="r"><code>look_for(wvs.dta, &quot;kepuasan.keuangan&quot;)</code></pre>
+<pre><code>## pos   variable          label col_type values        
+## &lt;chr&gt; &lt;chr&gt;             &lt;chr&gt; &lt;chr&gt;    &lt;chr&gt;         
+## 9     kepuasan.keuangan —     dbl      range: -5 - 10</code></pre>
+<pre class="r"><code>look_for(wvs.dta, &quot;tkt.percaya&quot;)</code></pre>
+<pre><code>## pos   variable    label col_type values       
+## &lt;chr&gt; &lt;chr&gt;       &lt;chr&gt; &lt;chr&gt;    &lt;chr&gt;        
+## 10    tkt.percaya —     dbl      range: -2 - 2</code></pre>
+<pre class="r"><code>look_for(wvs.dta, &quot;gender&quot;)</code></pre>
+<pre><code>## pos   variable label col_type values      
+## &lt;chr&gt; &lt;chr&gt;    &lt;chr&gt; &lt;chr&gt;    &lt;chr&gt;       
+## 11    gender   —     dbl      range: 1 - 2</code></pre>
+<pre class="r"><code>look_for(wvs.dta, &quot;usia&quot;)</code></pre>
+<pre><code>## pos   variable label col_type values        
+## &lt;chr&gt; &lt;chr&gt;    &lt;chr&gt; &lt;chr&gt;    &lt;chr&gt;         
+## 12    usia     —     dbl      range: 18 - 87</code></pre>
+<pre class="r"><code>look_for(wvs.dta, &quot;sts.nikah&quot;)</code></pre>
+<pre><code>## pos   variable  label col_type values      
+## &lt;chr&gt; &lt;chr&gt;     &lt;chr&gt; &lt;chr&gt;    &lt;chr&gt;       
+## 13    sts.nikah —     dbl      range: 1 - 6</code></pre>
+<pre class="r"><code>look_for(wvs.dta, &quot;pendidikan&quot;)</code></pre>
+<pre><code>## pos   variable   label col_type values       
+## &lt;chr&gt; &lt;chr&gt;      &lt;chr&gt; &lt;chr&gt;    &lt;chr&gt;        
+## 14    pendidikan —     dbl      range: -1 - 8</code></pre>
+<pre class="r"><code>look_for(wvs.dta, &quot;pendapatan&quot;)</code></pre>
+<pre><code>## pos   variable   label col_type values        
+## &lt;chr&gt; &lt;chr&gt;      &lt;chr&gt; &lt;chr&gt;    &lt;chr&gt;         
+## 16    pendapatan —     dbl      range: -2 - 10</code></pre>
+<pre class="r"><code>look_for(wvs.dta, &quot;statuskerja&quot;)</code></pre>
+<pre><code>## pos   variable    label col_type values       
+## &lt;chr&gt; &lt;chr&gt;       &lt;chr&gt; &lt;chr&gt;    &lt;chr&gt;        
+## 15    statuskerja —     dbl      range: -5 - 8</code></pre>
+<pre class="r"><code>look_for(wvs.dta, &quot;TV&quot;)</code></pre>
+<pre><code>## pos   variable label col_type values       
+## &lt;chr&gt; &lt;chr&gt;    &lt;chr&gt; &lt;chr&gt;    &lt;chr&gt;        
+## 17    TV       —     dbl      range: -5 - 5</code></pre>
+<pre class="r"><code>## 1. Recode Data
+
+### Recode kesehatan
+wvs.dta &lt;- mutate(wvs.dta, kesehatan.x = case_when(
+  kesehatan == 1 ~ 4,
+  kesehatan == 2 ~ 3,
+  kesehatan == 3 ~ 2,
+  kesehatan == 4 ~ 1,
+  TRUE ~ NA_real_
+))
+
+
+### 2. Membuat Dummy Variable
+
+## Dummy pendidikan
+library(labelled)
+look_for(wvs.dta, &quot;pendidikan&quot;)</code></pre>
+<pre><code>## pos   variable   label col_type values       
+## &lt;chr&gt; &lt;chr&gt;      &lt;chr&gt; &lt;chr&gt;    &lt;chr&gt;        
+## 14    pendidikan —     dbl      range: -1 - 8</code></pre>
+<pre class="r"><code>wvs.dta$lowedu &lt;- ifelse(wvs.dta$pendidikan==1,1,0)
+wvs.dta &lt;- mutate(wvs.dta, middleedu = case_when(
+  pendidikan  &lt;= 1 ~ 0,
+  pendidikan  == 2 ~ 1,
+  pendidikan  == 3 ~ 1,
+  pendidikan  &gt;= 4 ~ 0,
+  TRUE ~ NA_real_
+))
+wvs.dta$Highedu &lt;- ifelse(wvs.dta$pendidikan&gt;=4,1,0)
+
+## Dummy gender
+look_for(wvs.dta, &quot;gender&quot;)</code></pre>
+<pre><code>## pos   variable label col_type values      
+## &lt;chr&gt; &lt;chr&gt;    &lt;chr&gt; &lt;chr&gt;    &lt;chr&gt;       
+## 11    gender   —     dbl      range: 1 - 2</code></pre>
+<pre class="r"><code>wvs.dta$male &lt;- ifelse(wvs.dta$gender==1,1,0)
+
+## Dummy sts.nikah
+look_for(wvs.dta, &quot;sts.nikah&quot;)</code></pre>
+<pre><code>## pos   variable  label col_type values      
+## &lt;chr&gt; &lt;chr&gt;     &lt;chr&gt; &lt;chr&gt;    &lt;chr&gt;       
+## 13    sts.nikah —     dbl      range: 1 - 6</code></pre>
+<pre class="r"><code>wvs.dta$menikah &lt;- ifelse(wvs.dta$sts.nikah==1,1,0)
+
+
+## Dummy tkt.percaya
+look_for(wvs.dta, &quot;tkt.percaya&quot;)</code></pre>
+<pre><code>## pos   variable    label col_type values       
+## &lt;chr&gt; &lt;chr&gt;       &lt;chr&gt; &lt;chr&gt;    &lt;chr&gt;        
+## 10    tkt.percaya —     dbl      range: -2 - 2</code></pre>
+<pre class="r"><code>wvs.dta$percaya &lt;- ifelse(wvs.dta$tkt.percaya==1,1,0)
+wvs.dta$tdkperrcaya &lt;- ifelse(wvs.dta$tkt.percaya==2,0,0)
+
+## Dummy Pendapatan 
+look_for(wvs.dta, &quot;pendapatan&quot;)</code></pre>
+<pre><code>## pos   variable   label col_type values        
+## &lt;chr&gt; &lt;chr&gt;      &lt;chr&gt; &lt;chr&gt;    &lt;chr&gt;         
+## 16    pendapatan —     dbl      range: -2 - 10</code></pre>
+<pre class="r"><code>wvs.dta$highincome &lt;- ifelse(wvs.dta$pendapatan&lt;=5,1,0)
+wvs.dta$lowincome &lt;- ifelse(wvs.dta$pendapatan&lt;=10,1,0)
+
+## Dummy TV
+look_for(wvs.dta, &quot;TV&quot;)</code></pre>
+<pre><code>## pos   variable label col_type values       
+## &lt;chr&gt; &lt;chr&gt;    &lt;chr&gt; &lt;chr&gt;    &lt;chr&gt;        
+## 17    TV       —     dbl      range: -5 - 5</code></pre>
+<pre class="r"><code>wvs.dta$daily &lt;- ifelse(wvs.dta$TV ==1,1,0)
+wvs.dta$weekly &lt;- ifelse(wvs.dta$TV ==2,1,0)
+wvs.dta$monthly &lt;- ifelse(wvs.dta$TV ==3,1,0)
+wvs.dta$lessmonthly &lt;- ifelse(wvs.dta$TV ==4,1,0)
+wvs.dta$never &lt;- ifelse(wvs.dta$TV==5,1,0)
+
+## Dummy  statuskerja
+look_for(wvs.dta, &quot;statuskerja&quot;)</code></pre>
+<pre><code>## pos   variable    label col_type values       
+## &lt;chr&gt; &lt;chr&gt;       &lt;chr&gt; &lt;chr&gt;    &lt;chr&gt;        
+## 15    statuskerja —     dbl      range: -5 - 8</code></pre>
+<pre class="r"><code>wvs.dta$unemployment &lt;- ifelse(wvs.dta$statuskerja ==7,1,0)
+
+
+wvs.dta &lt;- as.data.frame(apply(wvs.dta, 2, function(x) as.numeric(x)))
+write.csv(wvs.dta, &quot;Faiz Chusaini_20413244026_TugasStatistika.csv&quot;)
+
+
+#REGRESION
+library(stargazer)</code></pre>
+<pre><code>## 
+## Please cite as:</code></pre>
+<pre><code>##  Hlavac, Marek (2018). stargazer: Well-Formatted Regression and Summary Statistics Tables.</code></pre>
+<pre><code>##  R package version 5.2.2. https://CRAN.R-project.org/package=stargazer</code></pre>
+<pre class="r"><code>regression &lt;- lm(kepuasan.keuangan ~ pendapatan + TV, data = wvs.dta)
+summary(regression)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = kepuasan.keuangan ~ pendapatan + TV, data = wvs.dta)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -11.082  -1.753   0.240   1.904   5.444 
+## 
+## Coefficients:
+##             Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)  5.13588    0.11626  44.175   &lt;2e-16 ***
+## pendapatan   0.33566    0.01943  17.274   &lt;2e-16 ***
+## TV          -0.06116    0.04109  -1.489    0.137    
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 2.65 on 3197 degrees of freedom
+## Multiple R-squared:  0.08734,    Adjusted R-squared:  0.08677 
+## F-statistic:   153 on 2 and 3197 DF,  p-value: &lt; 2.2e-16</code></pre>
+<pre class="r"><code>stargazer(regression, type = &quot;html&quot;, 
+          out = &quot;regression.htm&quot;)</code></pre>
+<pre><code>## 
+## &lt;table style=&quot;text-align:center&quot;&gt;&lt;tr&gt;&lt;td colspan=&quot;2&quot; style=&quot;border-bottom: 1px solid black&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;text-align:left&quot;&gt;&lt;/td&gt;&lt;td&gt;&lt;em&gt;Dependent variable:&lt;/em&gt;&lt;/td&gt;&lt;/tr&gt;
+## &lt;tr&gt;&lt;td&gt;&lt;/td&gt;&lt;td colspan=&quot;1&quot; style=&quot;border-bottom: 1px solid black&quot;&gt;&lt;/td&gt;&lt;/tr&gt;
+## &lt;tr&gt;&lt;td style=&quot;text-align:left&quot;&gt;&lt;/td&gt;&lt;td&gt;kepuasan.keuangan&lt;/td&gt;&lt;/tr&gt;
+## &lt;tr&gt;&lt;td colspan=&quot;2&quot; style=&quot;border-bottom: 1px solid black&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;text-align:left&quot;&gt;pendapatan&lt;/td&gt;&lt;td&gt;0.336&lt;sup&gt;***&lt;/sup&gt;&lt;/td&gt;&lt;/tr&gt;
+## &lt;tr&gt;&lt;td style=&quot;text-align:left&quot;&gt;&lt;/td&gt;&lt;td&gt;(0.019)&lt;/td&gt;&lt;/tr&gt;
+## &lt;tr&gt;&lt;td style=&quot;text-align:left&quot;&gt;&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
+## &lt;tr&gt;&lt;td style=&quot;text-align:left&quot;&gt;TV&lt;/td&gt;&lt;td&gt;-0.061&lt;/td&gt;&lt;/tr&gt;
+## &lt;tr&gt;&lt;td style=&quot;text-align:left&quot;&gt;&lt;/td&gt;&lt;td&gt;(0.041)&lt;/td&gt;&lt;/tr&gt;
+## &lt;tr&gt;&lt;td style=&quot;text-align:left&quot;&gt;&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
+## &lt;tr&gt;&lt;td style=&quot;text-align:left&quot;&gt;Constant&lt;/td&gt;&lt;td&gt;5.136&lt;sup&gt;***&lt;/sup&gt;&lt;/td&gt;&lt;/tr&gt;
+## &lt;tr&gt;&lt;td style=&quot;text-align:left&quot;&gt;&lt;/td&gt;&lt;td&gt;(0.116)&lt;/td&gt;&lt;/tr&gt;
+## &lt;tr&gt;&lt;td style=&quot;text-align:left&quot;&gt;&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
+## &lt;tr&gt;&lt;td colspan=&quot;2&quot; style=&quot;border-bottom: 1px solid black&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;text-align:left&quot;&gt;Observations&lt;/td&gt;&lt;td&gt;3,200&lt;/td&gt;&lt;/tr&gt;
+## &lt;tr&gt;&lt;td style=&quot;text-align:left&quot;&gt;R&lt;sup&gt;2&lt;/sup&gt;&lt;/td&gt;&lt;td&gt;0.087&lt;/td&gt;&lt;/tr&gt;
+## &lt;tr&gt;&lt;td style=&quot;text-align:left&quot;&gt;Adjusted R&lt;sup&gt;2&lt;/sup&gt;&lt;/td&gt;&lt;td&gt;0.087&lt;/td&gt;&lt;/tr&gt;
+## &lt;tr&gt;&lt;td style=&quot;text-align:left&quot;&gt;Residual Std. Error&lt;/td&gt;&lt;td&gt;2.650 (df = 3197)&lt;/td&gt;&lt;/tr&gt;
+## &lt;tr&gt;&lt;td style=&quot;text-align:left&quot;&gt;F Statistic&lt;/td&gt;&lt;td&gt;152.969&lt;sup&gt;***&lt;/sup&gt; (df = 2; 3197)&lt;/td&gt;&lt;/tr&gt;
+## &lt;tr&gt;&lt;td colspan=&quot;2&quot; style=&quot;border-bottom: 1px solid black&quot;&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&quot;text-align:left&quot;&gt;&lt;em&gt;Note:&lt;/em&gt;&lt;/td&gt;&lt;td style=&quot;text-align:right&quot;&gt;&lt;sup&gt;*&lt;/sup&gt;p&lt;0.1; &lt;sup&gt;**&lt;/sup&gt;p&lt;0.05; &lt;sup&gt;***&lt;/sup&gt;p&lt;0.01&lt;/td&gt;&lt;/tr&gt;
+## &lt;/table&gt;</code></pre>
+<pre class="r"><code>plot(regression)</code></pre>
+<p><img src="/2021/05/03/try/index_files/figure-html/unnamed-chunk-1-1.png" width="672" /><img src="/2021/05/03/try/index_files/figure-html/unnamed-chunk-1-2.png" width="672" /><img src="/2021/05/03/try/index_files/figure-html/unnamed-chunk-1-3.png" width="672" /><img src="/2021/05/03/try/index_files/figure-html/unnamed-chunk-1-4.png" width="672" /></p>
+
+    </div>
+  </article>
+
+  
+
+
+</main>
+
+      <footer class="footer">
+        <ul class="footer-links">
+          <li>
+            <a href="/index.xml" type="application/rss+xml" target="_blank">RSS feed</a>
+          </li>
+          <li>
+            <a href="https://gohugo.io/" class="footer-links-kudos">Made with <img src="/images/hugo-logo.png" alt="Img link to Hugo website" width="22" height="22"></a>
+          </li>
+        </ul>
+      </footer>
+
+    </div>
+    
+
+
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+
+
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/r.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/yaml.min.js"></script>
+<script>hljs.configure({languages: []}); hljs.initHighlightingOnLoad();</script>
+
+
+
+    
+<script src="/js/math-code.js"></script>
+<script async src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+
+
+    
+  </body>
+</html>
+

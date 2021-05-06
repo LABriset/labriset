@@ -6,7 +6,16 @@
     <description>Recent content in R Markdown on A Hugo website</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Tue, 01 Dec 2020 21:13:14 -0500</lastBuildDate><atom:link href="/tags/r-markdown/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Mon, 03 May 2021 00:00:00 +0000</lastBuildDate><atom:link href="/tags/r-markdown/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>TRY</title>
+      <link>/2021/05/03/try/</link>
+      <pubDate>Mon, 03 May 2021 00:00:00 +0000</pubDate>
+      
+      <guid>/2021/05/03/try/</guid>
+      <description>############################################################################ persiapan Data World Values Survey (WVS) ################### Script ini adalah alur kerja untuk memeriksa data WVS, ########## dari awal data mentah, pemilihan variabel yang relevan ########## dan inspeksi data secara umum dan keseluruhan ######################################################################### 1. Setup working directonarysetwd(&amp;quot;D:/Kuliah/SEMESTER 3/MPS/WVS DATA/Journal&amp;quot;)## 2. Mengimpor Datalibrary(haven)wvs.dta &amp;lt;- read_dta(&amp;quot;D:/Kuliah/SEMESTER 3/MPS/WVS DATA/F00010404-WVS_Wave_7_Indonesia_Stata_v1.4/WVS_Wave_7_Indonesia_Stata_v1.4.dta&amp;quot;)## 3. Inspeksi Data (1) mengecek data secara keseluruhan dim(wvs.dta)## [1] 3200 380View(wvs.</description>
+    </item>
+    
     <item>
       <title>Hello R Markdown</title>
       <link>/2020/12/01/hello-r-markdown/</link>
