@@ -1,0 +1,511 @@
+---
+title: Covid-19 di Daerah Istimewa Yogyakarta
+author: Almaisa Kinudung
+date: '2021-06-01'
+slug: covid-19-di-daerah-istimewa-yogyakarta
+categories: []
+tags: []
+---
+
+
+
+<div id="latar-belakang" class="section level1">
+<h1>Latar Belakang</h1>
+<p>Proyek ini merupakan proyek yang terdapat pada DQLAB, dimana merupakan hasil eksplorasi sederhana terhadap data Covid-19 di Indonesia, Data yang digunakan diambil langsung dari API (Application Programming Interface) yang tersedia di covid19.go.id. Sehingga dalam proyek ini akan mempelajari terkait pengambilan data dari API hingga melakukan visualisasi data.</p>
+<p>Mengakses API covid.go.id</p>
+<p>Rekapitulasi data COVID-19 Indonesia tersedia dalam API publik yang beralamat di ___<a href="https://data.covid19.go.id/public/api/update.json___" class="uri">https://data.covid19.go.id/public/api/update.json___</a>. Salah satu cara untuk mengakses API adalah dengan menggunakan fungsi GET() dari paket httr.
+Penulis menggunakan nama rsp sebagai tempat penyimpanan data COVID-19</p>
+<pre class="r"><code>library(httr)
+resp &lt;- GET(&quot;https://data.covid19.go.id/public/api/update.json&quot;)
+status_code(resp)</code></pre>
+<pre><code>## [1] 200</code></pre>
+<p>pada code sebelumnya ditulis status_code() yang artinya melihat apakah API yang kita akses sudah berhasil atau sebaliknya, dimana status kode nya itu sendiri memiliki beberapa kriteria seperti:
+# *** 200. Artinya permintaan sukses dipenuhi. *** 404. Artinya berkas yang diminta tidak dapat ditemukan. *** 403. Artinya akses permintaan ditolak. *** 500. Artinya terjadi kesalahan pada server.</p>
+</div>
+<div id="headers-api" class="section level1">
+<h1>Headers API</h1>
+<p>Setelah permintaan API telah dipenuhi langkah selanjutnya mencoba menjalankan fungsi headers() pada resp untuk mengetahui metadata apa saja yang tersimpan. Apakah isi dari elemen content-type? Kapan terakhir kali informasi diperbaharui?</p>
+<pre class="r"><code>library(httr)
+resp &lt;- GET(&quot;https://data.covid19.go.id/public/api/update.json&quot;)
+headers(resp)</code></pre>
+<pre><code>## $server
+## [1] &quot;nginx&quot;
+## 
+## $date
+## [1] &quot;Tue, 01 Jun 2021 09:34:59 GMT&quot;
+## 
+## $`content-type`
+## [1] &quot;application/json&quot;
+## 
+## $`transfer-encoding`
+## [1] &quot;chunked&quot;
+## 
+## $connection
+## [1] &quot;keep-alive&quot;
+## 
+## $vary
+## [1] &quot;Accept-Encoding&quot;
+## 
+## $`last-modified`
+## [1] &quot;Mon, 31 May 2021 11:17:37 GMT&quot;
+## 
+## $vary
+## [1] &quot;Accept-Encoding&quot;
+## 
+## $etag
+## [1] &quot;W/\&quot;60b4c5d1-2aeee\&quot;&quot;
+## 
+## $`x-content-type-options`
+## [1] &quot;nosniff&quot;
+## 
+## $`x-xss-protection`
+## [1] &quot;1; mode=block&quot;
+## 
+## $`strict-transport-security`
+## [1] &quot;max-age=31536000; includeSubDomains; preload&quot;
+## 
+## $`x-content-type-options`
+## [1] &quot;nosniff&quot;
+## 
+## $`x-xss-protection`
+## [1] &quot;1; mode=block&quot;
+## 
+## $`content-encoding`
+## [1] &quot;gzip&quot;
+## 
+## attr(,&quot;class&quot;)
+## [1] &quot;insensitive&quot; &quot;list&quot;</code></pre>
+</div>
+<div id="mengekstrak-isi-respon" class="section level1">
+<h1>Mengekstrak isi Respon</h1>
+<p>Respon API dengan status code 200 menyatakan bahwa permintaan Kita berhasil dipenuhi dan konten yang diminta tersedia untuk diekstrak. Selain itu Kita juga telah mengetahui lewat fungsi headers() bahwa konten yang diminta tersedia dalam bentuk application/json, yaitu berkas JSON.</p>
+<p>Selanjutnya Penulis dapat mengekstrak konten tersebut dengan menggunakan fungsi content(). Fungsi content() tersebut secara cerdas akan menyesuaikan output sesuai dengan jenis berkas yang tersedia, dalam hal ini adalah berkas JSON. Penulis Menjalankan fungsi tersebut pada obyek resp dan menambahkan argumen as = “parsed” dan simplifyVector = TRUE yang disimpan sebagai cov_id_raw.</p>
+<pre class="r"><code>library(httr)
+resp &lt;- GET(&quot;https://data.covid19.go.id/public/api/update.json&quot;)
+cov_id_raw &lt;- content(resp, as = &quot;parsed&quot;, simplifyVector = TRUE)</code></pre>
+<p>dengan mengamati menggunakan fungsi length() dan names() penulis mengamati ada berapa komponen serta apa saja nama komponen dalam obyek cov_id_raw tersebut! Kemudian ekstraklah komponen ke-2 dan menyimpan dengan nama cov_id_update</p>
+<pre class="r"><code>length(cov_id_raw)</code></pre>
+<pre><code>## [1] 2</code></pre>
+<pre class="r"><code>names(cov_id_raw)</code></pre>
+<pre><code>## [1] &quot;data&quot;   &quot;update&quot;</code></pre>
+<pre class="r"><code>cov_id_update &lt;- cov_id_raw$update</code></pre>
+</div>
+<div id="melakukan-analisis-data" class="section level1">
+<h1>Melakukan Analisis Data</h1>
+<p>Sekarang Penulis diminta untuk fokus pada obyek cov_id_update untuk menjawab beberapa pertanyaan berikut:
+*** Kapan tanggal pembaharuan data penambahan kasus? *** Berapa jumlah penambahan kasus sembuh? *** Berapa jumlah penambahan kasus meninggal? *** Berapa jumlah total kasus positif hingga saat ini? *** Berapa jumlah total kasus meninggal hingga saat ini?
+# penulis menggunakan fungsi lapply() untuk melihat names pada cov_id_update secara bersamaan</p>
+<pre class="r"><code>lapply(cov_id_update, names)</code></pre>
+<pre><code>## $penambahan
+## [1] &quot;jumlah_positif&quot;   &quot;jumlah_meninggal&quot; &quot;jumlah_sembuh&quot;    &quot;jumlah_dirawat&quot;  
+## [5] &quot;tanggal&quot;          &quot;created&quot;         
+## 
+## $harian
+##  [1] &quot;key_as_string&quot;        &quot;key&quot;                  &quot;doc_count&quot;           
+##  [4] &quot;jumlah_meninggal&quot;     &quot;jumlah_sembuh&quot;        &quot;jumlah_positif&quot;      
+##  [7] &quot;jumlah_dirawat&quot;       &quot;jumlah_positif_kum&quot;   &quot;jumlah_sembuh_kum&quot;   
+## [10] &quot;jumlah_meninggal_kum&quot; &quot;jumlah_dirawat_kum&quot;  
+## 
+## $total
+## [1] &quot;jumlah_positif&quot;   &quot;jumlah_dirawat&quot;   &quot;jumlah_sembuh&quot;    &quot;jumlah_meninggal&quot;</code></pre>
+<pre class="r"><code>cov_id_update$penambahan$tanggal</code></pre>
+<pre><code>## [1] &quot;2021-05-31&quot;</code></pre>
+<pre class="r"><code>cov_id_update$penambahan$jumlah_sembuh</code></pre>
+<pre><code>## [1] 5121</code></pre>
+<pre class="r"><code>cov_id_update$penambahan$jumlah_meninggal</code></pre>
+<pre><code>## [1] 174</code></pre>
+<pre class="r"><code>cov_id_update$total$jumlah_positif</code></pre>
+<pre><code>## [1] 1821703</code></pre>
+<pre class="r"><code>cov_id_update$total$jumlah_meninggal</code></pre>
+<pre><code>## [1] 50578</code></pre>
+<p>dari hasil tersebut dapt diketahui bahwa penambahan terbaru terjadi pada tanggal 31-05-2021 dengan update jumlah sembuh terbaru sebanyak 5121, jumlah meninggal pada update terakhir sebanyak 174 orang, jumlah terupdate pasien positif sebanyak 1821703 dan total jumlah meninggal sebanyak 50578 orang.</p>
+</div>
+<div id="melihat-perkembangan-covid-19-di-daerah-istimewa-yogyakarta" class="section level1">
+<h1>Melihat perkembangan Covid-19 di Daerah Istimewa Yogyakarta</h1>
+<p>Penulis telah berhasil menjawab pertanyaan mengenai kondisi COVID-19 di Indonesia dengan menggunakan data yang langsung diambil menggunakan API. Namun bagaimana jika Penulis ingin berfokus dengan data COVID-19 di provinsi tempat menetap saat ini?</p>
+<p>covid19.go.id menyediakan data kasus COVID-19 tingkat provinsi di alamat API yang berbeda. Sebagai contoh data mengenai COVID-19 Daerah Istimewa Yogyakarta, tempat tinggal saya sekarang, tersedia di <a href="https://data.covid19.go.id/public/api/prov_detail_DAERAH_ISTIMEWA_YOGYAKARTA.json" class="uri">https://data.covid19.go.id/public/api/prov_detail_DAERAH_ISTIMEWA_YOGYAKARTA.json</a> dan dapat diakses menggunakan baris kode berikut:</p>
+<pre class="r"><code>library(httr)
+resp_DIY &lt;- GET(&quot;https://data.covid19.go.id/public/api/prov_detail_DAERAH_ISTIMEWA_YOGYAKARTA.json&quot;)
+cov_DIY_raw &lt;- content(resp_DIY, as = &quot;parsed&quot;, simplifyVector = TRUE)</code></pre>
+<p>dan menjawab pertanyaan yang sama dengan code sebagai berikut:</p>
+<pre class="r"><code>names(cov_DIY_raw)</code></pre>
+<pre><code>##  [1] &quot;last_date&quot;            &quot;provinsi&quot;             &quot;kasus_total&quot;         
+##  [4] &quot;kasus_tanpa_tgl&quot;      &quot;kasus_dengan_tgl&quot;     &quot;meninggal_persen&quot;    
+##  [7] &quot;meninggal_tanpa_tgl&quot;  &quot;meninggal_dengan_tgl&quot; &quot;sembuh_persen&quot;       
+## [10] &quot;sembuh_tanpa_tgl&quot;     &quot;sembuh_dengan_tgl&quot;    &quot;list_perkembangan&quot;   
+## [13] &quot;data&quot;</code></pre>
+<pre class="r"><code>cov_DIY_raw$kasus_total</code></pre>
+<pre><code>## [1] 44746</code></pre>
+<pre class="r"><code>cov_DIY_raw$meninggal_persen</code></pre>
+<pre><code>## [1] 2.637107</code></pre>
+<pre class="r"><code>cov_DIY_raw$sembuh_persen</code></pre>
+<pre><code>## [1] 92.61833</code></pre>
+<p>informasi yang didaptkan oleh penulis sudah baik namun belum cukup lengkap untuk menjawab pertanyaan pertanyaan yang lebih spesifik lagi dari waktu kewaktu.</p>
+<p>Kabar baiknya adalah informasi tersebut juga disediakan oleh covid19.go.id melalui permintaan API yang telah Penulis buat sebelumnya. Data historis perkembangan COVID-19 tersebut tersimpan dengan nama list_perkembangan. Ekstrak data tersebut dari cov_DIY_raw dan simpan hasilnya sebagai obyek bernama cov_DIY dan Amati struktur cov_DIY menggunakan fungsi str() dan head().</p>
+<pre class="r"><code>cov_DIY &lt;- cov_DIY_raw$list_perkembangan
+str(cov_DIY)</code></pre>
+<pre><code>## &#39;data.frame&#39;:    442 obs. of  9 variables:
+##  $ tanggal                     : num  1.58e+12 1.58e+12 1.58e+12 1.58e+12 1.58e+12 ...
+##  $ KASUS                       : int  1 0 0 0 1 0 0 0 0 1 ...
+##  $ MENINGGAL                   : int  0 0 0 0 0 0 0 1 0 1 ...
+##  $ SEMBUH                      : int  0 0 0 0 1 0 0 0 0 0 ...
+##  $ DIRAWAT_OR_ISOLASI          : int  1 0 0 0 0 0 0 -1 0 0 ...
+##  $ AKUMULASI_KASUS             : int  1 1 1 1 2 2 2 2 2 3 ...
+##  $ AKUMULASI_SEMBUH            : int  0 0 0 0 1 1 1 1 1 1 ...
+##  $ AKUMULASI_MENINGGAL         : int  0 0 0 0 0 0 0 1 1 2 ...
+##  $ AKUMULASI_DIRAWAT_OR_ISOLASI: int  1 1 1 1 1 1 1 0 0 0 ...</code></pre>
+<pre class="r"><code>head(cov_DIY)</code></pre>
+<pre><code>##        tanggal KASUS MENINGGAL SEMBUH DIRAWAT_OR_ISOLASI AKUMULASI_KASUS
+## 1 1.584317e+12     1         0      0                  1               1
+## 2 1.584403e+12     0         0      0                  0               1
+## 3 1.584490e+12     0         0      0                  0               1
+## 4 1.584576e+12     0         0      0                  0               1
+## 5 1.584662e+12     1         0      1                  0               2
+## 6 1.584749e+12     0         0      0                  0               2
+##   AKUMULASI_SEMBUH AKUMULASI_MENINGGAL AKUMULASI_DIRAWAT_OR_ISOLASI
+## 1                0                   0                            1
+## 2                0                   0                            1
+## 3                0                   0                            1
+## 4                0                   0                            1
+## 5                1                   0                            1
+## 6                1                   0                            1</code></pre>
+</div>
+<div id="melakukan-preprocessing-data" class="section level1">
+<h1>Melakukan Preprocessing Data</h1>
+<p>Setelah mengekstrak dan mengamati cov_DIY, Penulis menemukan beberapa kejanggalan pada data tersebut. Diantaranya adalah kejanggalan data pada kolom tanggal dan format penulisan kolom yang tidak konsisten. Sekarang Penulis akan mencoba melakukan beberapa tahapan untuk menjinakan data tersebut sehingga dapat diolah dan dianalisis dengan lebih mudah.</p>
+<p>Sebelum itu, silakan aktifkan paket dplyr yang akan dipergunakan untuk melakukan pengolahan data.</p>
+<p>Ada beberapa tahapan yang akan dilakukan untuk menjinakan data cov_DIY, yaitu:
+1. Menghapus kolom “DIRAWAT_OR_ISOLASI” dan “AKUMULASI_DIRAWAT_OR_ISOLASI”
+2. Menghapus semua kolom yang berisi nilai kumulatif
+3. Mengganti nama kolom “KASUS” menjadi “kasus_baru”
+4. Merubah format penulisan kolom berikut menjadi huruf kecil kolom MENINGGAL kolom SEMBUH
+5. Memperbaiki data pada kolom tanggal</p>
+<p>Penulis akan menggunakan operator pipe (%&gt;%) untuk merangkai fungsi menjadi sebuah pipeline. dan menyimpan hasil pengolahandengan nama new_cov_DIY.</p>
+<pre class="r"><code>library(dplyr)</code></pre>
+<pre><code>## 
+## Attaching package: &#39;dplyr&#39;</code></pre>
+<pre><code>## The following objects are masked from &#39;package:stats&#39;:
+## 
+##     filter, lag</code></pre>
+<pre><code>## The following objects are masked from &#39;package:base&#39;:
+## 
+##     intersect, setdiff, setequal, union</code></pre>
+<pre class="r"><code>new_cov_DIY &lt;-
+  cov_DIY %&gt;% 
+  select(-contains(&quot;DIRAWAT_OR_ISOLASI&quot;)) %&gt;% 
+  select(-starts_with(&quot;AKUMULASI&quot;)) %&gt;% 
+  rename(
+    kasus_baru = KASUS,
+    meninggal = MENINGGAL,
+    sembuh = SEMBUH
+  ) %&gt;% 
+  mutate(
+    tanggal = as.POSIXct(tanggal / 1000, origin = &quot;1970-01-01&quot;),
+    tanggal = as.Date(tanggal)
+  )
+str(new_cov_DIY)  </code></pre>
+<pre><code>## &#39;data.frame&#39;:    442 obs. of  4 variables:
+##  $ tanggal   : Date, format: &quot;2020-03-16&quot; &quot;2020-03-17&quot; ...
+##  $ kasus_baru: int  1 0 0 0 1 0 0 0 0 1 ...
+##  $ meninggal : int  0 0 0 0 0 0 0 1 0 1 ...
+##  $ sembuh    : int  0 0 0 0 1 0 0 0 0 0 ...</code></pre>
+</div>
+<div id="menunjukan-hasil-melalui" class="section level1">
+<h1>Menunjukan Hasil Melalui</h1>
+<p>Selanjutnya malakukan visualisasi yang dibantu dengan library(ggplot2) dan library(hrbrthemes) penulis menggunakan kolom tanggal sebagai sumbu X dan kasus baru sebagai sumbu Y menggunakan kode sebagai berikut:</p>
+<pre class="r"><code>library(ggplot2)
+
+#library(hrbrthemes)
+ggplot(new_cov_DIY, aes(x = tanggal, y = kasus_baru)) +
+  geom_col()</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-10-1.png" width="672" /></p>
+<p>Penulis telah berhasil membuat bar-chart. Namun grafik tersebut belum memiliki informasi yang jelas serta cenderung membosankan untuk dilihat. Sekarang penulis membuat kembali grafik tersebut dengan menggunakan baris kode yang telah dimodifikasi.</p>
+<pre class="r"><code>library(ggplot2)
+library(hrbrthemes)</code></pre>
+<pre><code>## Warning: package &#39;hrbrthemes&#39; was built under R version 4.0.5</code></pre>
+<pre><code>## NOTE: Either Arial Narrow or Roboto Condensed fonts are required to use these themes.</code></pre>
+<pre><code>##       Please use hrbrthemes::import_roboto_condensed() to install Roboto Condensed and</code></pre>
+<pre><code>##       if Arial Narrow is not on your system, please see https://bit.ly/arialnarrow</code></pre>
+<pre class="r"><code>ggplot(new_cov_DIY, aes(tanggal, kasus_baru)) +
+  geom_col(fill = &quot;salmon&quot;) +
+  labs(
+    x = NULL,
+    y = &quot;Jumlah Kasus&quot;,
+    title = &quot;Kasus Harian Positif COVID-19 di Daerah Istimewa Yogyakarta&quot;,
+    subtitle = &quot;&quot;,
+    caption = &quot;Sumber data: covid.19.go.id&quot;
+  )+
+  theme_ipsum(
+    base_size = 13,
+    plot_title_size = 21,
+    grid = &quot;Y&quot;,
+    ticks = TRUE
+  )+
+  theme(plot.title.position = &quot;plot&quot;)</code></pre>
+<pre><code>## Warning in grid.Call(C_stringMetric, as.graphicsAnnot(x$label)): font family not
+## found in Windows font database</code></pre>
+<pre><code>## Warning in grid.Call(C_stringMetric, as.graphicsAnnot(x$label)): font family not
+## found in Windows font database
+
+## Warning in grid.Call(C_stringMetric, as.graphicsAnnot(x$label)): font family not
+## found in Windows font database
+
+## Warning in grid.Call(C_stringMetric, as.graphicsAnnot(x$label)): font family not
+## found in Windows font database</code></pre>
+<pre><code>## Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y, : font
+## family not found in Windows font database
+
+## Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y, : font
+## family not found in Windows font database
+
+## Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y, : font
+## family not found in Windows font database
+
+## Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y, : font
+## family not found in Windows font database
+
+## Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y, : font
+## family not found in Windows font database
+
+## Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y, : font
+## family not found in Windows font database
+
+## Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y, : font
+## family not found in Windows font database
+
+## Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y, : font
+## family not found in Windows font database
+
+## Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y, : font
+## family not found in Windows font database
+
+## Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y, : font
+## family not found in Windows font database
+
+## Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y, : font
+## family not found in Windows font database
+
+## Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y, : font
+## family not found in Windows font database
+
+## Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y, : font
+## family not found in Windows font database</code></pre>
+<pre><code>## Warning in grid.Call.graphics(C_text, as.graphicsAnnot(x$label), x$x, x$y, :
+## font family not found in Windows font database</code></pre>
+<pre><code>## Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y, : font
+## family not found in Windows font database
+
+## Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y, : font
+## family not found in Windows font database
+
+## Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y, : font
+## family not found in Windows font database</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-11-1.png" width="672" /></p>
+<p>Maka hasil yang keluar merupakan plot berwarna dengan title yang sesuai, jika menemkan warning terkait font yang digunakan itu bukan masalah karena haltersebut hanya memberitahukan bahwa font yang digunakan dalam visualisasi tidak terdapat dalam database windows.</p>
+</div>
+<div id="grafik-untuk-kasus-sembuh" class="section level1">
+<h1>Grafik Untuk Kasus Sembuh</h1>
+<p>Selanjutnya Penluis melakukan visusalisai yang sama namun menggunakan Kasus sembuh sebagai sumbu Y</p>
+<pre class="r"><code>library(ggplot2)
+library(hrbrthemes)
+ggplot(new_cov_DIY, aes(tanggal, sembuh)) +
+  geom_col(fill = &quot;olivedrab2&quot;) +
+  labs(
+    x = NULL,
+    y = &quot;Jumlah kasus&quot;,
+    title = &quot;Kasus Harian Sembuh Dari COVID-19 di Daerah Istimewa Yogyakarta&quot;,
+    caption = &quot;Sumber data: covid.19.go.id&quot;
+  ) +
+  theme_ipsum(
+    base_size = 13, 
+    plot_title_size = 21,
+    grid = &quot;Y&quot;,
+    ticks = TRUE
+  ) +
+  theme(plot.title.position = &quot;plot&quot;)</code></pre>
+<pre><code>## Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y, : font
+## family not found in Windows font database
+
+## Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y, : font
+## family not found in Windows font database
+
+## Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y, : font
+## family not found in Windows font database
+
+## Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y, : font
+## family not found in Windows font database
+
+## Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y, : font
+## family not found in Windows font database
+
+## Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y, : font
+## family not found in Windows font database
+
+## Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y, : font
+## family not found in Windows font database
+
+## Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y, : font
+## family not found in Windows font database
+
+## Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y, : font
+## family not found in Windows font database
+
+## Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y, : font
+## family not found in Windows font database
+
+## Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y, : font
+## family not found in Windows font database</code></pre>
+<pre><code>## Warning in grid.Call.graphics(C_text, as.graphicsAnnot(x$label), x$x, x$y, :
+## font family not found in Windows font database</code></pre>
+<pre><code>## Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y, : font
+## family not found in Windows font database
+
+## Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y, : font
+## family not found in Windows font database</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-12-1.png" width="672" /></p>
+</div>
+<div id="bagaimana-dengan-pekan-ini" class="section level1">
+<h1>Bagaimana Dengan Pekan ini ?</h1>
+<p>Selanjutnya penulis akna melihat bagaimana perkembangan Covid pada Pekan ini atau pekan terbaru terakhir update data dengan mengekstrak waktu setiap pekannya yaitu week() yang dimana dapt mengetahui apakah pekan lalu lebih baik dari pada pekan sekarang atau sebaliknya.</p>
+<pre class="r"><code>library(dplyr)
+library(lubridate)</code></pre>
+<pre><code>## 
+## Attaching package: &#39;lubridate&#39;</code></pre>
+<pre><code>## The following objects are masked from &#39;package:base&#39;:
+## 
+##     date, intersect, setdiff, union</code></pre>
+<pre class="r"><code>cov_DIY_pekanan &lt;- new_cov_DIY %&gt;% 
+  count(
+    tahun = year(tanggal),
+    pekan_ke = week(tanggal),
+    wt = kasus_baru,
+    name = &quot;jumlah&quot;
+  )
+
+glimpse(cov_DIY_pekanan)</code></pre>
+<pre><code>## Rows: 65
+## Columns: 3
+## $ tahun    &lt;dbl&gt; 2020, 2020, 2020, 2020, 2020, 2020, 2020, 2020, 2020, 2020...
+## $ pekan_ke &lt;dbl&gt; 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25...
+## $ jumlah   &lt;int&gt; 1, 1, 9, 16, 32, 12, 21, 28, 48, 38, 19, 11, 12, 24, 18, 2...</code></pre>
+<p>untuk membuat grafik berwarna penulis dapat menambahkan fill = lebih_baik pada bar chart agar tampilan lebih menarik</p>
+<pre class="r"><code>library(ggplot2)
+library(hrbrthemes)
+
+ggplot(cov_DIY_pekanan, aes(pekan_ke, jumlah)) +
+  geom_col(show.legend = FALSE) +
+  scale_x_continuous(breaks = 9:29, expand = c(0, 0)) +
+  scale_fill_manual(values = c(&quot;TRUE&quot; = &quot;seagreen3&quot;, &quot;FALSE&quot; = &quot;salmon&quot;)) +
+  labs(
+    x = NULL,
+    y = &quot;Jumlah kasus&quot;,
+    title = &quot;Kasus Pekanan Positif COVID-19 di Daerah Istimewa Yogyakarta&quot;,
+    subtitle = &quot;Kolom hijau menunjukan penambahan kasus baru lebih sedikit dibandingkan satu pekan sebelumnya&quot;,
+    caption = &quot;Sumber data: covid.19.go.id&quot;
+  ) +
+  theme_ipsum(
+    base_size = 13,
+    plot_title_size = 21,
+    grid = &quot;Y&quot;,
+    ticks = TRUE
+  ) +
+  theme(plot.title.position = &quot;plot&quot;)</code></pre>
+<pre><code>## Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y, : font
+## family not found in Windows font database
+
+## Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y, : font
+## family not found in Windows font database
+
+## Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y, : font
+## family not found in Windows font database
+
+## Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y, : font
+## family not found in Windows font database
+
+## Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y, : font
+## family not found in Windows font database
+
+## Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y, : font
+## family not found in Windows font database
+
+## Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y, : font
+## family not found in Windows font database
+
+## Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y, : font
+## family not found in Windows font database
+
+## Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y, : font
+## family not found in Windows font database
+
+## Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y, : font
+## family not found in Windows font database
+
+## Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y, : font
+## family not found in Windows font database
+
+## Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y, : font
+## family not found in Windows font database
+
+## Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y, : font
+## family not found in Windows font database</code></pre>
+<pre><code>## Warning in grid.Call.graphics(C_text, as.graphicsAnnot(x$label), x$x, x$y, :
+## font family not found in Windows font database</code></pre>
+<pre><code>## Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y, : font
+## family not found in Windows font database
+
+## Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y, : font
+## family not found in Windows font database
+
+## Warning in grid.Call(C_textBounds, as.graphicsAnnot(x$label), x$x, x$y, : font
+## family not found in Windows font database</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-14-1.png" width="672" /></p>
+<p>selanjutnya jika penulis ingin melihat pola dinamika yang terjadi di data covid-19 dapat meggunakan kode berikut:</p>
+<pre class="r"><code>library(dplyr)
+cov_DIY_akumulasi &lt;- 
+  new_cov_DIY %&gt;% 
+  transmute(
+    tanggal,
+    akumulasi_aktif = cumsum(kasus_baru) - cumsum(sembuh) - cumsum(meninggal),
+    akumulasi_sembuh = cumsum(sembuh),
+    akumulasi_meninggal = cumsum(meninggal)
+  )
+
+tail(cov_DIY_akumulasi)</code></pre>
+<pre><code>##        tanggal akumulasi_aktif akumulasi_sembuh akumulasi_meninggal
+## 437 2021-05-26            2125            40566                1144
+## 438 2021-05-27            2099            40771                1151
+## 439 2021-05-28            2080            40966                1155
+## 440 2021-05-29            2113            41135                1164
+## 441 2021-05-30            2110            41302                1176
+## 442 2021-05-31            2123            41443                1180</code></pre>
+<p>penulis juga dapat menggunakan line chart unutk melihat bagaimana perkembangan dari waktu kewaktu</p>
+<pre class="r"><code>library(ggplot2)
+ggplot(data = cov_DIY_akumulasi, aes(x = tanggal, y = akumulasi_aktif)) +
+  geom_line()</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-16-1.png" width="672" /></p>
+<p>akan menggunakan fungsi gather() dari paket tidyr untuk mentransformasi data cov_DIY_akumulasi. Data tersebut akan dirubah dari yang semula berformat wide menjadi format long. AKtifkanlah paket tidyr terlebih dahulu dan lengkapilah baris kode berikut untuk melakukan pivot data dan menyimpannya pada cov_DIY_akumulasi_pivot.</p>
+<pre class="r"><code>library(dplyr)
+library(tidyr)
+
+dim(cov_DIY_akumulasi)</code></pre>
+<pre><code>## [1] 442   4</code></pre>
+<pre class="r"><code>cov_DIY_akumulasi_pivot &lt;- 
+  cov_DIY_akumulasi %&gt;% 
+  gather(
+    key = &quot;kategori&quot;,
+    value = &quot;jumlah&quot;,
+    -tanggal
+  ) %&gt;% 
+  mutate(
+    kategori = sub(pattern = &quot;akumulasi_&quot;, replacement = &quot;&quot;, kategori)
+  )
+
+dim(cov_DIY_akumulasi_pivot)</code></pre>
+<pre><code>## [1] 1326    3</code></pre>
+<pre class="r"><code>glimpse(cov_DIY_akumulasi_pivot)</code></pre>
+<pre><code>## Rows: 1,326
+## Columns: 3
+## $ tanggal  &lt;date&gt; 2020-03-16, 2020-03-17, 2020-03-18, 2020-03-19, 2020-03-2...
+## $ kategori &lt;chr&gt; &quot;aktif&quot;, &quot;aktif&quot;, &quot;aktif&quot;, &quot;aktif&quot;, &quot;aktif&quot;, &quot;aktif&quot;, &quot;akt...
+## $ jumlah   &lt;int&gt; 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 2, 7, 12, 11, 11...</code></pre>
+</div>

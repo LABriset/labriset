@@ -1,0 +1,301 @@
+---
+title: Covid-19 di Daerah Istimewa Yogyakarta
+author: Almaisa Kinudung
+date: '2021-06-01'
+slug: covid-19-di-daerah-istimewa-yogyakarta
+categories: []
+tags: []
+---
+# Latar Belakang
+
+Proyek ini merupakan proyek yang terdapat pada DQLAB, dimana merupakan hasil eksplorasi sederhana terhadap data Covid-19 di Indonesia, Data yang digunakan diambil langsung dari API (Application Programming Interface) yang tersedia di covid19.go.id. Sehingga dalam proyek ini akan mempelajari terkait pengambilan data dari API hingga melakukan visualisasi data.
+
+Mengakses API covid.go.id
+
+Rekapitulasi data COVID-19 Indonesia tersedia dalam API publik yang beralamat di ___https://data.covid19.go.id/public/api/update.json___. Salah satu cara untuk mengakses API adalah dengan menggunakan fungsi GET() dari paket httr.
+Penulis menggunakan nama rsp sebagai tempat penyimpanan data COVID-19
+
+```{r}
+library(httr)
+resp <- GET("https://data.covid19.go.id/public/api/update.json")
+status_code(resp)
+```
+
+pada code sebelumnya ditulis status_code() yang artinya melihat apakah API yang kita akses sudah berhasil atau sebaliknya, dimana status kode nya itu sendiri memiliki beberapa kriteria seperti:
+# *** 200. Artinya permintaan sukses dipenuhi. *** 404. Artinya berkas yang diminta tidak dapat ditemukan. *** 403. Artinya akses permintaan ditolak. *** 500. Artinya terjadi kesalahan pada server.
+
+# Headers API
+
+Setelah permintaan API telah dipenuhi langkah selanjutnya mencoba menjalankan fungsi headers() pada resp untuk mengetahui metadata apa saja yang tersimpan. Apakah isi dari elemen content-type? Kapan terakhir kali informasi diperbaharui?
+
+```{r}
+library(httr)
+resp <- GET("https://data.covid19.go.id/public/api/update.json")
+headers(resp)
+```
+
+# Mengekstrak isi Respon
+
+Respon API dengan status code 200 menyatakan bahwa permintaan Kita berhasil dipenuhi dan konten yang diminta tersedia untuk diekstrak. Selain itu Kita juga telah mengetahui lewat fungsi headers() bahwa konten yang diminta tersedia dalam bentuk application/json, yaitu berkas JSON.
+
+Selanjutnya Penulis dapat mengekstrak konten tersebut dengan menggunakan fungsi content(). Fungsi content() tersebut secara cerdas akan menyesuaikan output sesuai dengan jenis berkas yang tersedia, dalam hal ini adalah berkas JSON. Penulis Menjalankan fungsi tersebut pada obyek resp dan menambahkan argumen as = "parsed" dan simplifyVector = TRUE yang disimpan sebagai cov_id_raw.
+
+```{r}
+library(httr)
+resp <- GET("https://data.covid19.go.id/public/api/update.json")
+cov_id_raw <- content(resp, as = "parsed", simplifyVector = TRUE)
+```
+
+dengan mengamati menggunakan fungsi length() dan names() penulis mengamati ada berapa komponen serta apa saja nama komponen dalam obyek cov_id_raw tersebut! Kemudian ekstraklah komponen ke-2 dan menyimpan dengan nama cov_id_update
+
+```{r}
+length(cov_id_raw)
+names(cov_id_raw)
+cov_id_update <- cov_id_raw$update
+```
+
+# Melakukan Analisis Data
+
+Sekarang Penulis diminta untuk fokus pada obyek cov_id_update untuk menjawab beberapa pertanyaan berikut:
+*** Kapan tanggal pembaharuan data penambahan kasus? *** Berapa jumlah penambahan kasus sembuh? *** Berapa jumlah penambahan kasus meninggal? *** Berapa jumlah total kasus positif hingga saat ini? *** Berapa jumlah total kasus meninggal hingga saat ini?
+# penulis menggunakan fungsi lapply() untuk melihat names pada cov_id_update secara bersamaan
+
+```{r}
+lapply(cov_id_update, names)
+
+cov_id_update$penambahan$tanggal
+
+cov_id_update$penambahan$jumlah_sembuh
+
+cov_id_update$penambahan$jumlah_meninggal
+
+cov_id_update$total$jumlah_positif
+
+cov_id_update$total$jumlah_meninggal
+```
+
+dari hasil tersebut dapt diketahui bahwa penambahan terbaru terjadi pada tanggal 31-05-2021 dengan update jumlah sembuh terbaru sebanyak 5121, jumlah meninggal pada update terakhir sebanyak 174 orang, jumlah terupdate pasien positif sebanyak 1821703 dan total jumlah meninggal sebanyak 50578 orang.
+
+# Melihat perkembangan Covid-19 di Daerah Istimewa Yogyakarta####
+
+Penulis telah berhasil menjawab pertanyaan mengenai kondisi COVID-19 di Indonesia dengan menggunakan data yang langsung diambil menggunakan API. Namun bagaimana jika Penulis ingin berfokus dengan data COVID-19 di provinsi tempat menetap saat ini?
+
+covid19.go.id menyediakan data kasus COVID-19 tingkat provinsi di alamat API yang berbeda. Sebagai contoh data mengenai COVID-19 Daerah Istimewa Yogyakarta, tempat tinggal saya sekarang, tersedia di https://data.covid19.go.id/public/api/prov_detail_DAERAH_ISTIMEWA_YOGYAKARTA.json dan dapat diakses menggunakan baris kode berikut:
+
+```{r}
+library(httr)
+resp_DIY <- GET("https://data.covid19.go.id/public/api/prov_detail_DAERAH_ISTIMEWA_YOGYAKARTA.json")
+cov_DIY_raw <- content(resp_DIY, as = "parsed", simplifyVector = TRUE)
+```
+
+dan menjawab pertanyaan yang sama dengan code sebagai berikut:
+
+```{r}
+names(cov_DIY_raw)
+
+cov_DIY_raw$kasus_total
+
+cov_DIY_raw$meninggal_persen
+
+cov_DIY_raw$sembuh_persen
+```
+
+informasi yang didaptkan oleh penulis sudah baik namun belum cukup lengkap untuk menjawab pertanyaan pertanyaan yang lebih spesifik lagi dari waktu kewaktu.
+
+Kabar baiknya adalah informasi tersebut juga disediakan oleh covid19.go.id melalui permintaan API yang telah Penulis buat sebelumnya. Data historis perkembangan COVID-19 tersebut tersimpan dengan nama list_perkembangan. Ekstrak data tersebut dari cov_DIY_raw dan simpan hasilnya sebagai obyek bernama cov_DIY dan Amati struktur cov_DIY menggunakan fungsi str() dan head().
+
+```{r}
+cov_DIY <- cov_DIY_raw$list_perkembangan
+str(cov_DIY)
+
+head(cov_DIY)
+```
+
+# Melakukan Preprocessing Data
+
+Setelah mengekstrak dan mengamati cov_DIY, Penulis menemukan beberapa kejanggalan pada data tersebut. Diantaranya adalah kejanggalan data pada kolom tanggal dan format penulisan kolom yang tidak konsisten. Sekarang Penulis akan mencoba melakukan beberapa tahapan untuk menjinakan data tersebut sehingga dapat diolah dan dianalisis dengan lebih mudah.
+
+Sebelum itu, silakan aktifkan paket dplyr yang akan dipergunakan untuk melakukan pengolahan data.
+
+Ada beberapa tahapan yang akan dilakukan untuk menjinakan data cov_DIY, yaitu:
+1. Menghapus kolom “DIRAWAT_OR_ISOLASI” dan “AKUMULASI_DIRAWAT_OR_ISOLASI”
+2. Menghapus semua kolom yang berisi nilai kumulatif
+3. Mengganti nama kolom “KASUS” menjadi “kasus_baru”
+4. Merubah format penulisan kolom berikut menjadi huruf kecil kolom MENINGGAL kolom SEMBUH
+5. Memperbaiki data pada kolom tanggal
+
+Penulis akan menggunakan operator pipe (%>%) untuk merangkai fungsi menjadi sebuah pipeline. dan menyimpan hasil pengolahandengan nama new_cov_DIY.
+
+```{r}
+library(dplyr)
+
+new_cov_DIY <-
+  cov_DIY %>% 
+  select(-contains("DIRAWAT_OR_ISOLASI")) %>% 
+  select(-starts_with("AKUMULASI")) %>% 
+  rename(
+    kasus_baru = KASUS,
+    meninggal = MENINGGAL,
+    sembuh = SEMBUH
+  ) %>% 
+  mutate(
+    tanggal = as.POSIXct(tanggal / 1000, origin = "1970-01-01"),
+    tanggal = as.Date(tanggal)
+  )
+str(new_cov_DIY)  
+```
+
+# Menunjukan Hasil Melalui
+
+Selanjutnya malakukan visualisasi yang dibantu dengan library(ggplot2) dan library(hrbrthemes) penulis menggunakan kolom tanggal sebagai sumbu X dan kasus baru sebagai sumbu Y menggunakan kode sebagai berikut:
+
+```{r}
+library(ggplot2)
+
+#library(hrbrthemes)
+ggplot(new_cov_DIY, aes(x = tanggal, y = kasus_baru)) +
+  geom_col()
+```
+
+Penulis telah berhasil membuat bar-chart. Namun grafik tersebut belum memiliki informasi yang jelas serta cenderung membosankan untuk dilihat. Sekarang penulis membuat kembali grafik tersebut dengan menggunakan baris kode yang telah dimodifikasi.
+
+```{r}
+library(ggplot2)
+library(hrbrthemes)
+
+ggplot(new_cov_DIY, aes(tanggal, kasus_baru)) +
+  geom_col(fill = "salmon") +
+  labs(
+    x = NULL,
+    y = "Jumlah Kasus",
+    title = "Kasus Harian Positif COVID-19 di Daerah Istimewa Yogyakarta",
+    subtitle = "",
+    caption = "Sumber data: covid.19.go.id"
+  )+
+  theme_ipsum(
+    base_size = 13,
+    plot_title_size = 21,
+    grid = "Y",
+    ticks = TRUE
+  )+
+  theme(plot.title.position = "plot")
+```
+
+Maka hasil yang keluar merupakan plot berwarna dengan title yang sesuai, jika menemkan warning terkait font yang digunakan itu bukan masalah karena haltersebut hanya memberitahukan bahwa font yang digunakan dalam visualisasi tidak terdapat dalam database windows.
+
+# Grafik Untuk Kasus Sembuh
+
+Selanjutnya Penluis melakukan visusalisai yang sama namun menggunakan Kasus sembuh sebagai sumbu Y
+
+```{r}
+library(ggplot2)
+library(hrbrthemes)
+ggplot(new_cov_DIY, aes(tanggal, sembuh)) +
+  geom_col(fill = "olivedrab2") +
+  labs(
+    x = NULL,
+    y = "Jumlah kasus",
+    title = "Kasus Harian Sembuh Dari COVID-19 di Daerah Istimewa Yogyakarta",
+    caption = "Sumber data: covid.19.go.id"
+  ) +
+  theme_ipsum(
+    base_size = 13, 
+    plot_title_size = 21,
+    grid = "Y",
+    ticks = TRUE
+  ) +
+  theme(plot.title.position = "plot")
+```
+
+# Bagaimana Dengan Pekan ini ?
+
+Selanjutnya penulis akna melihat bagaimana perkembangan Covid pada Pekan ini atau pekan terbaru terakhir update data dengan mengekstrak waktu setiap pekannya yaitu week() yang dimana dapt mengetahui apakah pekan lalu lebih baik dari pada pekan sekarang atau sebaliknya.
+
+```{r}
+library(dplyr)
+library(lubridate)
+
+cov_DIY_pekanan <- new_cov_DIY %>% 
+  count(
+    tahun = year(tanggal),
+    pekan_ke = week(tanggal),
+    wt = kasus_baru,
+    name = "jumlah"
+  )
+
+glimpse(cov_DIY_pekanan)
+```
+
+untuk membuat grafik berwarna penulis dapat menambahkan fill = lebih_baik pada bar chart agar tampilan lebih menarik
+
+```{r}
+library(ggplot2)
+library(hrbrthemes)
+
+ggplot(cov_DIY_pekanan, aes(pekan_ke, jumlah)) +
+  geom_col(show.legend = FALSE) +
+  scale_x_continuous(breaks = 9:29, expand = c(0, 0)) +
+  scale_fill_manual(values = c("TRUE" = "seagreen3", "FALSE" = "salmon")) +
+  labs(
+    x = NULL,
+    y = "Jumlah kasus",
+    title = "Kasus Pekanan Positif COVID-19 di Daerah Istimewa Yogyakarta",
+    subtitle = "Kolom hijau menunjukan penambahan kasus baru lebih sedikit dibandingkan satu pekan sebelumnya",
+    caption = "Sumber data: covid.19.go.id"
+  ) +
+  theme_ipsum(
+    base_size = 13,
+    plot_title_size = 21,
+    grid = "Y",
+    ticks = TRUE
+  ) +
+  theme(plot.title.position = "plot")
+```
+
+selanjutnya jika penulis ingin melihat pola dinamika yang terjadi di data covid-19 dapat meggunakan kode berikut:
+
+```{r}
+library(dplyr)
+cov_DIY_akumulasi <- 
+  new_cov_DIY %>% 
+  transmute(
+    tanggal,
+    akumulasi_aktif = cumsum(kasus_baru) - cumsum(sembuh) - cumsum(meninggal),
+    akumulasi_sembuh = cumsum(sembuh),
+    akumulasi_meninggal = cumsum(meninggal)
+  )
+
+tail(cov_DIY_akumulasi)
+```
+
+penulis juga dapat menggunakan line chart unutk melihat bagaimana perkembangan dari waktu kewaktu
+
+```{r}
+library(ggplot2)
+ggplot(data = cov_DIY_akumulasi, aes(x = tanggal, y = akumulasi_aktif)) +
+  geom_line()
+```
+
+akan menggunakan fungsi gather() dari paket tidyr untuk mentransformasi data cov_DIY_akumulasi. Data tersebut akan dirubah dari yang semula berformat wide menjadi format long. AKtifkanlah paket tidyr terlebih dahulu dan lengkapilah baris kode berikut untuk melakukan pivot data dan menyimpannya pada cov_DIY_akumulasi_pivot.
+
+```{r}
+library(dplyr)
+library(tidyr)
+
+dim(cov_DIY_akumulasi)
+
+cov_DIY_akumulasi_pivot <- 
+  cov_DIY_akumulasi %>% 
+  gather(
+    key = "kategori",
+    value = "jumlah",
+    -tanggal
+  ) %>% 
+  mutate(
+    kategori = sub(pattern = "akumulasi_", replacement = "", kategori)
+  )
+
+dim(cov_DIY_akumulasi_pivot)
+
+glimpse(cov_DIY_akumulasi_pivot)
+```
