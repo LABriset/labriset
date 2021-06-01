@@ -1,30 +1,19 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>R on A Hugo website</title>
+    <title>R on Lab Riset Sosial</title>
     <link>/categories/r/</link>
-    <description>Recent content in R on A Hugo website</description>
+    <description>Recent content in R on Lab Riset Sosial</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Mon, 03 May 2021 00:00:00 +0000</lastBuildDate><atom:link href="/categories/r/index.xml" rel="self" type="application/rss+xml" />
     <item>
-      <title>TRY</title>
-      <link>/2021/05/03/try/</link>
+      <title>RMD TRY</title>
+      <link>/2021/05/03/rmd-try/</link>
       <pubDate>Mon, 03 May 2021 00:00:00 +0000</pubDate>
       
-      <guid>/2021/05/03/try/</guid>
+      <guid>/2021/05/03/rmd-try/</guid>
       <description>############################################################################ persiapan Data World Values Survey (WVS) ################### Script ini adalah alur kerja untuk memeriksa data WVS, ########## dari awal data mentah, pemilihan variabel yang relevan ########## dan inspeksi data secara umum dan keseluruhan ######################################################################### 1. Setup working directonarysetwd(&amp;quot;D:/Kuliah/SEMESTER 3/MPS/WVS DATA/Journal&amp;quot;)## 2. Mengimpor Datalibrary(haven)wvs.dta &amp;lt;- read_dta(&amp;quot;D:/Kuliah/SEMESTER 3/MPS/WVS DATA/F00010404-WVS_Wave_7_Indonesia_Stata_v1.4/WVS_Wave_7_Indonesia_Stata_v1.4.dta&amp;quot;)## 3. Inspeksi Data (1) mengecek data secara keseluruhan dim(wvs.dta)## [1] 3200 380View(wvs.</description>
-    </item>
-    
-    <item>
-      <title>Hello R Markdown</title>
-      <link>/2020/12/01/hello-r-markdown/</link>
-      <pubDate>Tue, 01 Dec 2020 21:13:14 -0500</pubDate>
-      
-      <guid>/2020/12/01/hello-r-markdown/</guid>
-      <description>R MarkdownThis is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see http://rmarkdown.rstudio.com.
-You can embed an R code chunk like this:
-summary(cars)## speed dist ## Min. : 4.0 Min. : 2.00 ## 1st Qu.:12.0 1st Qu.: 26.00 ## Median :15.0 Median : 36.00 ## Mean :15.4 Mean : 42.98 ## 3rd Qu.</description>
     </item>
     
   </channel>
