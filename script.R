@@ -1,0 +1,5 @@
+library(blogdown)
+blogdown::build_site()
+blogdown::check_netlify()
+blogdown::serve_site()
+blogdown::install_hugo()
