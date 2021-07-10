@@ -1,5 +1,5 @@
 ---
-title: Paper Tawang
+title: Find Suitable Systems and Policy to Enhance Indonesia Education Quality Through Its PISA Result: Compare with Finland Education System
 author: ''
 date: '2021-04-18'
 slug: paper-tawang
