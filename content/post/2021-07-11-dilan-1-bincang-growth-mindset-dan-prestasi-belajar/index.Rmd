@@ -1,5 +1,5 @@
 ---
-title: 'Dilan #1 | "Bincang Growth Mindset dan Prestasi Belajar"'
+title: 'Dilan #1 | "Bincang Growth Mindset dan Prestasi Belajar'
 author: ''
 date: '2021-07-11'
 slug: dilan-1-bincang-growth-mindset-dan-prestasi-belajar
@@ -7,7 +7,8 @@ categories: []
 tags: []
 ---
 
-<img src="images/Dilan 1.jpg" alt="Poster" width="400px" height="200px"/>
+![](images/Dilan 1.jpg)
+
 Dilan #1 | "Bincang Growth Mindset dan Prestasi Belajar"
 
 Jumat, 16 Juli 2021
