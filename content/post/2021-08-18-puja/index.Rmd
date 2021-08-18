@@ -1,0 +1,23 @@
+---
+title: Puja
+author: AME
+date: '2021-08-18'
+slug: puja
+categories: []
+tags: []
+---
+
+cara membuat blog
+adsafas
+asdasd
+
+```{r}
+library(ggplot2)
+
+
+```
+
+asdasdasd
+
+
+![Graphic logo](images/image-removebg-preview (28).png)
